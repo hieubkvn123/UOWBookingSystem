@@ -1,7 +1,8 @@
 CREATE DATABASE IF NOT EXISTS UOW_BOOKING_SYS;
 DROP TABLE IF EXISTS bookings;
-
 DROP TABLE IF EXISTS room_details;
+DROP TABLE IF EXISTS staffs;
+DROP TABLE IF EXISTS promo_code;
 
 USE UOW_BOOKING_SYS;
 
@@ -42,6 +43,8 @@ CREATE TABLE IF NOT EXISTS bookings (
 	uow_id VARCHAR(8) NOT NULL,
 	checkin DATE NOT NULL,
 	checkout DATE NOT NULL,
+	checkin_time TIME NOT NULL,
+	checkout_time TIME NOT NULL,
 	num_people INT(10) NOT NULL,
 	category VARCHAR(20) NOT NULL,
 	campus VARCHAR(100) NOT NULL,
@@ -49,4 +52,25 @@ CREATE TABLE IF NOT EXISTS bookings (
 	PRIMARY KEY (booking_id),
 	FOREIGN KEY (room_id) REFERENCES room_details(room_id) 
 	ON DELETE CASCADE
-)
+);
+
+# create some staff demo data
+CREATE TABLE IF NOT EXISTS staffs (
+	name VARCHAR(30) NOT NULL,
+	uow_id INT(8) NOT NULL,
+	password VARCHAR(100) NOT NULL
+);
+
+# insert some demo data
+INSERT INTO staffs VALUES("Nong Minh Hieu", 6216602, "");
+INSERT INTO staffs VALUES("Justin Xin", 6216603, "");
+
+# create a table for promo code
+CREATE TABLE IF NOT EXISTS promo_code (
+	code VARCHAR(20) NOT NULL,
+	value INT(10) NOT NULL, # percentage value of discount
+	applicable_for VARCHAR(20) NOT NULL
+);
+
+INSERT INTO promo_code VALUES("HieuDepTry", 20, "Student");
+INSERT INTO promo_code VALUES("Hieuhandsome", 10, "Staff");

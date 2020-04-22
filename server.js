@@ -4,19 +4,12 @@ const path = require('path')
 const formidable = require('formidable')
 const mysql = require('mysql')
 const bodyParser = require('body-parser')
+const db_config = require('./db_config')
 
 const PORT = 8080
-const HOST = 'localhost'
-const USERNAME = 'root' // as configured by staff
-const PASSWORD = 'XOVT7a1XDK;' //  as configured by staff
-const DATABASE = 'UOW_BOOKING_SYS'
+var DB_CONFIG = db_config.DB_CONFIG
 
-var connection = mysql.createConnection({
-	host : HOST,
-	user : USERNAME,
-	password : PASSWORD,
-	database : DATABASE
-})
+var connection = mysql.createConnection(DB_CONFIG)
 
 connection.connect(function(err){
 	if(err){
