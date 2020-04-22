@@ -93,7 +93,10 @@ app.post('/book', function(req, res){
 })
 
 app.post("/process_form", function(req, res){
-	// res.send("Hello")
+	// first, check if the promo code is present
+	// if not, calculate price as usual
+	// if yes, if code is invalid or unapplicable, return an error
+	// otherwise, calculate price with discount
 	var form = formidable.IncomingForm()
 	form.parse(req, function(err, fields, files){
 		// update the selected room status to occupied
