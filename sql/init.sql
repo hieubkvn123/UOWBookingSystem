@@ -39,14 +39,14 @@ INSERT INTO room_details VALUES (
 # Create a booking table to record bookings
 CREATE TABLE IF NOT EXISTS bookings (
 	booking_id INT NOT NULL AUTO_INCREMENT,
-	name VARCHAR(200) NOT NULL,
-	uow_id VARCHAR(8) NOT NULL,
-	checkin DATE NOT NULL,
-	checkout DATE NOT NULL,
-	checkin_time TIME NOT NULL,
-	checkout_time TIME NOT NULL,
-	num_people INT(10) NOT NULL,
-	category VARCHAR(20) NOT NULL,
+	name VARCHAR(200) NOT NULL, # editable
+	uow_id VARCHAR(8) NOT NULL, # editable
+	checkin DATE NOT NULL, # editable
+	checkout DATE NOT NULL, # editable
+	checkin_time TIME NOT NULL, # editable
+	checkout_time TIME NOT NULL, # editable
+	num_people INT(10) NOT NULL, # not editable
+	category VARCHAR(20) NOT NULL, # not editable
 	campus VARCHAR(100) NOT NULL,
 	room_id INT NOT NULL,
 	PRIMARY KEY (booking_id),

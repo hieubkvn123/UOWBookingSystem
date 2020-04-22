@@ -5,6 +5,7 @@ const formidable = require('formidable')
 const mysql = require('mysql')
 const bodyParser = require('body-parser')
 const db_config = require('./db_config')
+const session = require('express-session')
 
 const PORT = 8080
 var DB_CONFIG = db_config.DB_CONFIG
@@ -25,12 +26,20 @@ var server = http.Server(app)
 
 app.use('/static', express.static(path.join(__dirname, 'static')))
 app.use(bodyParser.urlencoded({extended : true}))
+app.use(session({secret : 'HieuDepTry',
+				 saveUninitialized : true,
+				 resave : true
+}))
+
+
+app.set('view engine', 'ejs')
 
 
 app.get('/', function(req, res){
-	res.sendFile('index.html', {root: __dirname})
+	res.sendFile('templates/index.html', {root: __dirname})
 })
 
+// just to check available rooms only
 app.post('/book', function(req, res){
 	var form = formidable.IncomingForm()
 	form.parse(req, function(err, fields, files){
@@ -103,7 +112,7 @@ app.post("/process_form", function(req, res){
 
 			var values = [
 				[mysql.AUTO_INCREMENT,fields.name, fields.uow_id,fields.checkin, 
-				fields.checkout,
+				fields.checkout, fields.checkin_time, fields.checkout_time,
 				fields.num_people, fields.category, fields.campus, id_list[i]]
 			]
 
@@ -170,6 +179,82 @@ app.post('/cancel_booking', function(req, res){
 			}
 		})
 	})
+})
+
+app.post("/edit_booking", function(req, res){
+	var form = formidable.IncomingForm()
+	form.parse(req, function(err, fields, files){
+		var booking_id = fields.booking_id
+
+		var sql = "SELECT * FROM bookings WHERE booking_id=" + booking_id
+		connection.query(sql, function(err, results){
+			if(err) { console.log(err) }
+			// users can edit :
+			// 1. name on the booking
+			// 2. UOW ID attached to the booking
+			// 3. Checkin - checkout date and time
+
+			// since there is only one result for each booking_id
+			var result = results[0]
+			var booking_id = result.booking_id
+			var name = result.name
+			var uow_id = result.uow_id
+			var checkin = result.checkin
+			var checkout = result.checkout 
+			var checkin_time = result.checkin_time
+			var checkout_time = result.checkout_time 
+
+			obj = {
+				'booking_id' : booking_id,
+				'name' : name,
+				'uow_id' : uow_id,
+				'checkin' : checkin,
+				'checkout' : checkout,
+				'checkin_time' : checkin_time,
+				'checkout_time' : checkout_time
+			}
+
+			obj_str = JSON.stringify(obj)
+			res.send(obj_str)
+		})
+	})
+})
+
+app.post("/confirm_edit", function(req, res){
+	var form = formidable.IncomingForm()
+	form.parse(req, function(err, fields, files){
+		var booking_id = fields.booking_id
+		var name = fields.name
+		var uow_id = fields.uow_id
+		var checkin = fields.checkin
+		var checkout = fields.checkout 
+		var checkin_time = fields.checkin_time 
+		var checkout_time = fields.checkout_time 
+
+		var sql = "UPDATE bookings SET name='" + name + "'"
+		sql += ", uow_id=" + uow_id
+		sql += ", checkin='" + checkin + "'"
+		sql += ", checkout='" + checkout + "'"
+		sql += ", checkin_time='" + checkin_time + "'"
+		sql += ", checkout_time='" + checkout_time + "'"
+		sql += " WHERE booking_id=" + booking_id
+
+		connection.query(sql, function(err, results){
+			if(err){
+				console.log(err)
+			}else{
+				if(results.affectedRows > 0){
+					res.send("Booking detail is edited successfully ... ")
+				}else{
+					res.send("There was something wrong with editing process ... ")
+				}
+			}
+		})
+	})
+})
+
+app.post("/payment", function(req, res){
+	res.render('payment')
 })
 
 console.log("[INFO] Starting Server ... ")

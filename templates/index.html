@@ -24,8 +24,6 @@
 	<link type="text/css" rel="stylesheet" href="/static/css/modal.css" />
 
 	<script src = '/static/js/handleBookingRequest.js'></script>
-	<script src = '/static/js/Modal.js'></script>
-
 </head>
 
 <body>
@@ -35,7 +33,7 @@
 			<div class="row">
 				<div class="col-md-7 col-md-push-5">
 					<div class="booking-cta">
-						<h1>UOW Booking System</h1>
+						<h1>Welcome to UOW Booking System</h1>
 						<p>Welcome to UOW Room Booking system for students and staffs.</p>
 					</div>
 				</div>
@@ -45,10 +43,24 @@
 								<span class="form-label">Your name</span>
 								<input class="form-control" type="text" placeholder="Enter name as in your UOW ID" id = 'name' name = 'name'>
 							</div>
-							<div class="form-group">
-								<span class="form-label">Your UOW ID</span>
-								<input class="form-control" type="text" placeholder="Enter your UOW ID" id = 'uow_id' name = 'uow_id'>
+
+							<!-- UOW ID and promo code-->
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<span class="form-label">UOW ID</span>
+										<input class="form-control" type="text" placeholder="UOW ID" id = 'uow_id' name = 'uow_id'>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<span class="form-label">Promo code</span>
+										<input class="form-control" type="text" placeholder="Promo Code" id = 'promo_code' name = 'promo_code'>
+									</div>
+								</div>
 							</div>
+
+							<!-- Check in and check out date - time -->
 							<div class="row">
 								<div class="col-sm-6">
 									<div class="form-group">
@@ -63,6 +75,24 @@
 									</div>
 								</div>
 							</div>
+
+							<!-- Check in and check out date - time -->
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<span class="form-label">Check In time</span>
+										<input class="form-control" type="time" required id = 'check-in-time' name = 'check-in-time'>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<span class="form-label">Check out time</span>
+										<input class="form-control" type="time" required id = 'check-out-time' name = 'check-out-time'>
+									</div>
+								</div>
+							</div>
+
+							<!-- Add in information -->
 							<div class="row">
 								<div class="col-sm-4">
 									<div class="form-group">
@@ -125,6 +155,8 @@
 		    	<input type = 'text' name = 'uow_id' id = 'uow_id_input' hidden/>
 		    	<input type = 'date' name = 'check_in' id = 'checkin_input' hidden/>
 		    	<input type = 'date' name = 'check_out' id = 'checkout_input' hidden/>
+		    	<input type = 'time' name = 'check_in_time' id = 'checkin_time_input' hidden/>
+		    	<input type = 'time' name = 'check_out_time' id = 'checkout_time_input' hidden/>
 		    	<input type = 'text' name = 'num_people' id = 'num_people_input' hidden/>
 		    	<input type = 'text' name = 'category' id = 'category_input' hidden/>
 		    	<input type = 'text' name = 'campus' id = 'campus_input' hidden/>
@@ -153,5 +185,65 @@
 		    </p>
 		</div>
 	</div>
+
+	<!-- The Modal -->
+	<div id="myModal3" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content3">
+			<span class="close" id = 'close-modal3'>&times;</span>
+		    <div class="booking-form">
+		    	<div class="form-group">
+					<input class="form-control" type="text" id = 'edit_booking_id' name = 'booking_id' hidden>
+				</div>
+				<div class="form-group">
+					<span class="form-label">Your name</span>
+					<input class="form-control" type="text" placeholder="Your name" id = 'edit_name' name = 'name'>
+				</div>
+				<div class="form-group">
+					<span class="form-label">UOW ID</span>
+					<input class="form-control" type="text" placeholder="UOW ID" id = 'edit_uow_id' name = 'uow_id'>
+				</div>
+
+
+				<!-- Check in and check out date - time -->
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-group">
+							<span class="form-label">Check In</span>
+							<input class="form-control" type="date" required id = 'edit_checkin_date' name = 'check-in-date'>
+						</div>
+					</div>
+				 	<div class="col-sm-6">
+						<div class="form-group">
+							<span class="form-label">Check out</span>
+							<input class="form-control" type="date" required id = 'edit_checkout_date' name = 'check-out-date'>
+						</div>
+					</div>
+				</div>
+
+				<!-- Check in and check out date - time -->
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-group">
+							<span class="form-label">Check In time</span>
+							<input class="form-control" type="time" required id = 'edit_checkin_time' name = 'check-in-time'>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="form-group">
+							<span class="form-label">Check out time</span>
+							<input class="form-control" type="time" required id = 'edit_checkout_time' name = 'check-out-time'>
+						</div>
+					</div>
+				</div>				
+			</div>
+			<table>
+				<tr>
+					<td><button class='btn btn-primary' id = 'confirm_edit' disabled="">Confirm Edit</button></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
 </body> 
 </html>
