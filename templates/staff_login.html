@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+	<title>UOW Room Booking Portal</title>
+	<link rel="icon" type="image/gif" href="/static/img/uow_icon.jpg" />
+
+	<!-- Google font -->
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+	<!-- Custom stlylesheet -->
+	<link type="text/css" rel="stylesheet" href="/static/css/style.css" />
+	<link type="text/css" rel="stylesheet" href="/static/css/modal.css" />
+</head>
+
+<body>
+<div id="booking" class="section">
+	<div class="section-center">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-7 col-md-push-5">
+					<div class="booking-cta">
+						<h1>Welcome to UOW Booking System<br>Staff Portal</h1>
+						<p>Welcome to the staff portal where staffs manage room availability and booking details</p>
+					</div>
+				</div>
+				<div class="col-md-4 col-md-pull-7">
+					<form method='POST' action='/login'>
+						<div class="booking-form">
+							<div class="form-group">
+								<span class="form-label">Your name</span>
+								<input class="form-control" type="text" placeholder="Enter name as in your UOW ID" id = 'name' name = 'name'>
+							</div>	
+							<div class="form-group">
+								<span class="form-label">UOW ID</span>
+								<input class="form-control" type="text" placeholder="UOW ID" id = 'uow_id' name = 'uow_id'>
+							</div>	
+							<div class="form-group">
+								<span class="form-label">Password</span>
+								<input class="form-control" type="password" placeholder="Password" id = 'password' name = 'password'>
+							</div>		
+							<table style='width:100%'>
+							<tr>
+								<td><button style="width: 100%" class='btn btn-primary' id = 'qr_login'>QR Login</button></td>
+								<td><input style="width: 100%" type='submit' class='btn btn-primary' id = 'login' value="Login"></td>
+							</tr>
+						</table>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+	<!-- The Modal -->
+	<div id="myModal" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content">
+		    <span class="close" id = 'close-modal'>&times;</span>
+		    <p id = 'modal-p'>Availability based on your input<br>
+		    <span id = "modal-sub-info" style='color:green'>(Please click on the room information to select)</span>
+		    </p>
+		    <form action='/process_form' method = 'POST' id = 'final-booking-form'> 
+		    	<ul id="points_list" style='list-style-type: none'>
+		    	</ul>
+		    	<input type = 'text' name = 'name' id = 'name_input' hidden/>
+		    	<input type = 'text' name = 'uow_id' id = 'uow_id_input' hidden/>
+		    	<input type = 'text' name = 'promo_code' id = 'promo_code_input' hidden/>
+		    	<input type = 'date' name = 'check_in' id = 'checkin_input' hidden/>
+		    	<input type = 'date' name = 'check_out' id = 'checkout_input' hidden/>
+		    	<input type = 'time' name = 'check_in_time' id = 'checkin_time_input' hidden/>
+		    	<input type = 'time' name = 'check_out_time' id = 'checkout_time_input' hidden/>
+		    	<input type = 'text' name = 'num_people' id = 'num_people_input' hidden/>
+		    	<input type = 'text' name = 'category' id = 'category_input' hidden/>
+		    	<input type = 'text' name = 'campus' id = 'campus_input' hidden/>
+		    	<input type = 'text' name = 'id_list' id = 'id_list_input' hidden/>
+		    	<button class = 'btn btn-primary' type = 'button' id = 'place-order-btn' disabled="">Place Your Booking</button>
+			</form>
+		</div>
+	</div>
+
+	<!-- The Modal -->
+	<div id="myModal2" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content2">
+		    <span class="close" id = 'close-modal2'>&times;</span>
+		    <p id = 'modal-p'>Insert your UOW ID<br>
+
+		    <table style = 'width: 100%'>
+		    	<tr style = 'width: 100%'>
+		    		<td><input type = 'text' name = 'uow_id' id = 'uow_id_order' class = 'form-control'/></td>
+		    		<td><button style = 'width: 100%' class = 'btn btn-primary' type = 'button' id = 'view-order-btn' disabled="">View Your Booking</button></td>
+		    	</tr>
+			</table>
+			<ul id = 'booking-info'>
+				
+			</ul>
+		    </p>
+		</div>
+	</div>
+
+	<!-- The Modal -->
+	<div id="myModal3" class="modal">
+		<!-- Modal content -->
+		<div class="modal-content3">
+			<span class="close" id = 'close-modal3'>&times;</span>
+		    <div class="booking-form">
+		    	<div class="form-group">
+					<input class="form-control" type="text" id = 'edit_booking_id' name = 'booking_id' hidden>
+				</div>
+				<div class="form-group">
+					<span class="form-label">Your name</span>
+					<input class="form-control" type="text" placeholder="Your name" id = 'edit_name' name = 'name'>
+				</div>
+				<div class="form-group">
+					<span class="form-label">UOW ID</span>
+					<input class="form-control" type="text" placeholder="UOW ID" id = 'edit_uow_id' name = 'uow_id'>
+				</div>
+
+
+				<!-- Check in and check out date - time -->
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-group">
+							<span class="form-label">Check In</span>
+							<input class="form-control" type="date" required id = 'edit_checkin_date' name = 'check-in-date'>
+						</div>
+					</div>
+				 	<div class="col-sm-6">
+						<div class="form-group">
+							<span class="form-label">Check out</span>
+							<input class="form-control" type="date" required id = 'edit_checkout_date' name = 'check-out-date'>
+						</div>
+					</div>
+				</div>
+
+				<!-- Check in and check out date - time -->
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-group">
+							<span class="form-label">Check In time</span>
+							<input class="form-control" type="time" required id = 'edit_checkin_time' name = 'check-in-time'>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="form-group">
+							<span class="form-label">Check out time</span>
+							<input class="form-control" type="time" required id = 'edit_checkout_time' name = 'check-out-time'>
+						</div>
+					</div>
+				</div>				
+			</div>
+			<table>
+				<tr>
+					<td><button class='btn btn-primary' id = 'confirm_edit' disabled="">Confirm Edit</button></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+</body> 
+</html>

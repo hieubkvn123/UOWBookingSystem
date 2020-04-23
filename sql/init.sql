@@ -58,12 +58,16 @@ CREATE TABLE IF NOT EXISTS bookings (
 CREATE TABLE IF NOT EXISTS staffs (
 	name VARCHAR(30) NOT NULL,
 	uow_id INT(8) NOT NULL,
-	password VARCHAR(100) NOT NULL
+	password VARCHAR(100) NOT NULL,
+	PRIMARY KEY (uow_id)
 );
 
 # insert some demo data
-INSERT INTO staffs VALUES("Nong Minh Hieu", 6216602, "");
-INSERT INTO staffs VALUES("Justin Xin", 6216603, "");
+# password is md5 equivalence of 'hieu30042000'
+INSERT INTO staffs VALUES("Nong Minh Hieu", 6216602, "f5417858515f50a91edb795bbbe2f3b2");
+
+# password is md5 equivalence of 'justinxin'
+INSERT INTO staffs VALUES("Justin Xin", 6216603, "ec5f6c2d6f8238278bab75c2e9c56b86");
 
 # create a table for promo code
 CREATE TABLE IF NOT EXISTS promo_code (
