@@ -14,7 +14,7 @@
 }
 
 /* Modal Content */
-.modal-content, .modal-content2, .modal-content3 {
+.modal-content, .modal-content2, .modal-content3, .modal-content4 {
   background-color:  #EAEDED;
   margin: auto;
   padding: 20px;
@@ -66,6 +66,10 @@
 }
 
 .modal-content3 {
+  width : 50%;
+}
+
+.modal-content4 {
   width : 50%;
 }
 

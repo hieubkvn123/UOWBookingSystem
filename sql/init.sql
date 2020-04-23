@@ -73,7 +73,8 @@ INSERT INTO staffs VALUES("Justin Xin", 6216603, "ec5f6c2d6f8238278bab75c2e9c56b
 CREATE TABLE IF NOT EXISTS promo_code (
 	code VARCHAR(20) NOT NULL,
 	value INT(10) NOT NULL, # percentage value of discount
-	applicable_for VARCHAR(20) NOT NULL
+	applicable_for VARCHAR(20) NOT NULL,
+	PRIMARY KEY (code)
 );
 
 INSERT INTO promo_code VALUES("HieuDepTry", 20, "Student");

@@ -274,5 +274,40 @@ def add_room():
 	else:
 		return "fail"
 
+@app.route("/add_promo", methods = ['POST'])
+def add_promo():
+	promo_code = request.form['promo_code']
+	applicable_for = request.form['applicable_for']
+	value = request.form['value']
+
+	mydb = mysql.connector.connect(
+		host = DB_CONFIG['host'],
+		user = DB_CONFIG['user'],
+		password = DB_CONFIG['password'],
+		database = DB_CONFIG['database'],
+		auth_plugin = 'mysql_native_password'
+	)
+
+	cursor = mydb.cursor()
+
+	# first, check if the same code is in the database
+	sql = "SELECT * FROM promo_code WHERE code='" + promo_code + "'"
+	cursor.execute(sql)
+	results = cursor.fetchall()
+	if(len(results) > 0):
+		return 'dupplicate'
+	else:
+		sql = "INSERT INTO promo_code VALUES (%s,%s,%s)"
+		val = (promo_code, value, applicable_for)
+
+		cursor.execute(sql, val)
+		mydb.commit()
+		mydb.close()
+
+		if(cursor.rowcount > 0):
+			return 'success'
+		else:
+			return 'fail'
+
 if(__name__ == "__main__"):
 	app.run(debug = True, port = PORT)

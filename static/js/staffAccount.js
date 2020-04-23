@@ -14,6 +14,12 @@ $(document).ready(function(){
 		$("#myModal3").val('')
 	})
 
+	$("#close-modal4").click(function(){
+		$("#myModal4 input").val('')
+		$("#add_promo_btn").attr('disabled', true)
+		$("#myModal4").fadeOut("fast")
+	})
+
 	var view_room = function(){
 		// just make a simple ajax request to server
 		var months = {
@@ -330,6 +336,52 @@ $(document).ready(function(){
  					$("#add_room_btn").attr("disabled", true)
  					view_room()
  					alert("There is something wrong while adding this room ... ")
+ 				}
+ 			}
+ 		})
+ 	})
+
+ 	$("#add_promo").click(function(){
+ 		$("#myModal4").fadeIn("fast")
+ 	})
+
+ 	$("#myModal4 input").on("input", function(){
+ 		if($("#promo_code").val() != "" &&
+ 		   $("#value").val() != ""){
+ 			$("#add_promo_btn").attr("disabled", false)
+ 		}else{
+ 			$("#add_promo_btn").attr("disabled", true)
+ 		}
+ 	})
+
+ 	$("#add_promo_btn").click(function(){
+ 		var promo_code = $("#promo_code").val()
+ 		var applicable_for = $("#applicable_for").val()
+ 		var value = $("#value").val()
+
+ 		var formData = new FormData()
+ 		formData.append("promo_code", promo_code)
+ 		formData.append("applicable_for", applicable_for)
+ 		formData.append("value", value)
+
+ 		$.ajax({
+ 			url : "/add_promo",
+ 			type : "POST",
+ 			data : formData,
+ 			async : true,
+ 			processData : false,
+ 			contentType : false,
+ 			success : function(response){
+ 				if(response == 'success'){
+ 					alert("Promotion code has been added ... ")
+ 					$("#myModal4 input").val('')
+ 					$("#add_promo_btn").attr("disabled", true)
+ 					$("#myModal4").fadeOut("fast")
+ 				}else if(response == "dupplicate"){
+ 					alert("This promotion code has already existed ...")
+ 				}
+ 				else{
+ 					alert("There is something wrong while adding this code ... ")
  				}
  			}
  		})
