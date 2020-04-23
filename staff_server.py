@@ -115,7 +115,6 @@ def view_room():
 			obj['campus'] = result[7]
 			obj['occupied'] = str(result[8])
 
-			print(obj['occupied'])
 			objects.append(obj)
 
 		obj_str = json.dumps(objects)
@@ -123,7 +122,7 @@ def view_room():
 
 	else: # invalid method
 		return redirect("/")
-		
+
 	mydb.close()
 
 if(__name__ == "__main__"):

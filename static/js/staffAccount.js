@@ -82,6 +82,9 @@ $(document).ready(function(){
 						.click(function(){
 							$("#room_id").html($(this).attr("room_id"))
 
+							// this should be able to update in real time
+							// lemme finish the editing and deal with you later
+							// remind me alright
 							// reformat checkin, checkout date
 							var avail_from = new Date($(this).attr("avail_from"))
 							var avail_to = new Date($(this).attr("avail_to"))
@@ -149,5 +152,13 @@ $(document).ready(function(){
 				}	
 			}
 		})
+	})
+
+	$("#myModal2 input").on("input", function(){
+		if($(this).val() == ""){
+			$("#edit_room_btn").attr("disabled", true)
+		}else{
+			$("#edit_room_btn").attr("disabled", false)
+		}
 	})
 })
