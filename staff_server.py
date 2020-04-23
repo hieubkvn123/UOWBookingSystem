@@ -30,7 +30,8 @@ def login():
 		host = DB_CONFIG['host'],
 		user = DB_CONFIG['user'],
 		password = DB_CONFIG['password'],
-		database = DB_CONFIG['database']
+		database = DB_CONFIG['database'],
+		auth_plugin = 'mysql_native_password'
 	)
 	name = request.form['name']
 	uow_id = request.form['uow_id']
@@ -79,7 +80,8 @@ def view_room():
 			host = DB_CONFIG['host'],
 			user = DB_CONFIG['user'],
 			password = DB_CONFIG['password'],
-			database = DB_CONFIG['database']
+			database = DB_CONFIG['database'],
+			auth_plugin = 'mysql_native_password'
 		)
 		sql = "SELECT * FROM room_details"
 		cursor = mydb.cursor()
@@ -124,6 +126,85 @@ def view_room():
 		return redirect("/")
 
 	mydb.close()
+
+@app.route("/view_room_by_id", methods = ['POST'])
+def view_room_by_id():
+	room_id = request.form['room_id']
+	sql = "SELECT * FROM room_details WHERE room_id=" + room_id
+
+	# create a new connection then close it -> resource efficiency
+	mydb = mysql.connector.connect(
+		host = DB_CONFIG['host'],
+		user = DB_CONFIG['user'],
+		password = DB_CONFIG['password'],
+		database = DB_CONFIG['database'],
+		auth_plugin = 'mysql_native_password'
+	)
+
+	cursor = mydb.cursor()
+
+	cursor.execute(sql)
+
+	result = cursor.fetchall()[0]
+	obj = {
+		"avail_from" : str(result[1].year) + '-' + str(result[1].month) + '-' + str(result[1].day),
+		"avail_to" : str(result[2].year) + '-' + str(result[2].month) + '-' + str(result[2].day),
+		"rate" : str(result[4]),
+		"description" : result[5],
+		"capacity" : str(result[6]),
+		"campus" : result[7],
+		"occupied" : str(result[8])
+	}
+
+	obj_str = json.dumps(obj)
+	mydb.close()
+
+	return obj_str
+
+@app.route("/edit_room", methods = ['POST'])
+def edit_room():
+	room_id = request.form['room_id']
+	avail_from = request.form['avail_from']
+	avail_to  = request.form['avail_to']
+	rate = request.form['rate']
+	capacity = request.form['capacity']
+	description = request.form['description']
+	campus = request.form['campus']
+	occupied = request.form['occupied']
+
+	if(occupied == 'Yes'):
+		occupied = 1
+	else:
+		occupied = 0
+
+	sql = "UPDATE room_details SET "
+	sql += "avail_from = '" + avail_from + "'"
+	sql += ",avail_to = '" + avail_to + "'"
+	sql += ",rate = " + str(rate)
+	sql += ",capacity = " + str(capacity) 
+	sql += ",description = '" + description + "'"
+	sql += ",campus = '" + campus + "'"
+	sql += ",occupied = " + str(occupied) 
+	sql += " WHERE room_id=" + str(room_id)
+
+	mydb = mysql.connector.connect(
+		host = DB_CONFIG['host'],
+		user = DB_CONFIG['user'],
+		password = DB_CONFIG['password'],
+		database = DB_CONFIG['database'],
+		auth_plugin = 'mysql_native_password'
+	)
+
+	cursor = mydb.cursor()
+	cursor.execute(sql)
+	mydb.commit()
+	mydb.close()
+
+	if(cursor.rowcount > 0):
+		return "success"
+	else:
+		return "fail"
+
 
 if(__name__ == "__main__"):
 	app.run(debug = True, port = PORT)

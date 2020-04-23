@@ -81,40 +81,54 @@ $(document).ready(function(){
 						})
 						.click(function(){
 							$("#room_id").html($(this).attr("room_id"))
+							var room_id = $(this).attr("room_id")
 
-							// this should be able to update in real time
-							// lemme finish the editing and deal with you later
-							// remind me alright
-							// reformat checkin, checkout date
-							var avail_from = new Date($(this).attr("avail_from"))
-							var avail_to = new Date($(this).attr("avail_to"))
+							// may be bulky but believe me
+							// this gives you the ability to update
+							// room details in real time
+							var formData = new FormData()
+							formData.append("room_id", room_id)
+							$.ajax({
+								url : '/view_room_by_id',
+								type : 'POST',
+								data : formData,
+								async : true,
+								processData : false,
+								contentType : false,
+								success : function(response){
+									// upon receiving the response the information about
+									// the room is present
+									obj = JSON.parse(response)
 
-							// reformat to string of yyyy-mm-dd
-							var avail_from_str = avail_from.getFullYear() + "-" + pad(avail_from.getMonth()+1,2) + "-" + pad(avail_from.getDate(),2)
-							var avail_to_str = avail_to.getFullYear() + "-" + pad(avail_to.getMonth() + 1, 2) + "-" + pad(avail_to.getDate(),2)
+									var avail_from = new Date(obj.avail_from)
+									var avail_to = new Date(obj.avail_to)
 
-							console.log(avail_from_str)
-							console.log(avail_to_str)
-							$("#avail_from").val(avail_from_str)
-							$("#avail_to").val(avail_to_str)
+									var avail_from_str = avail_from.getFullYear() + "-" + pad(avail_from.getMonth()+1,2) + "-" + pad(avail_from.getDate(),2)
+									var avail_to_str = avail_to.getFullYear() + "-" + pad(avail_to.getMonth() + 1, 2) + "-" + pad(avail_to.getDate(),2)
 
-							$("#rate").val($(this).attr("rate"))
-							$("#capacity").val($(this).attr("capacity"))
-							$("#description").val($(this).attr("description"))
+									$("#avail_from").val(avail_from_str)
+									$("#avail_to").val(avail_to_str)
 
-							if($(this).attr("campus") == "UOW Wollongong Campus"){
-								$("#campus").val("UOW Wollongong Campus")
-							}else{
-								$("#campus").val("Singapore Institute of Management")
-							}
+									$("#rate").val(obj.rate)
+									$("#capacity").val(obj.capacity)
+									$("#description").val(obj.description)
 
-							if($(this).attr("occupied") == 1){
-								$("#occupied").val("Yes")
-							}else{
-								$("#occupied").val("No")
-							}
+									if(obj.campus == "UOW Wollongong Campus"){
+										$("#campus").val("UOW Wollongong Campus")
+									}else{
+										$("#campus").val("Singapore Institute of Management")
+									}
 
-							$("#myModal2").fadeIn("fast")
+									if(obj.occupied == 1){
+										$("#occupied").val("Yes")
+									}else{
+										$("#occupied").val("No")
+									}
+
+									$("#myModal2").fadeIn("fast")
+								}
+							})
+							
 						})
 						.appendTo("#room_list")
 
@@ -161,4 +175,57 @@ $(document).ready(function(){
 			$("#edit_room_btn").attr("disabled", false)
 		}
 	})
+
+	$("#myModal2 select").change(function(){
+		if($(this).val() == ""){
+			$("#edit_room_btn").attr("disabled", true)
+		}else{
+			$("#edit_room_btn").attr("disabled", false)
+		}
+	})
+
+	$("#edit_room_btn").click(function(){
+		var avail_from = $("#avail_from").val()
+		var avail_to = $("#avail_to").val()
+		var rate = $("#rate").val()
+		var capacity = $("#capacity").val()
+		var description = $("#description").val()
+		var campus = $("#campus").val()
+		var occupied = $("#occupied").val()
+		var room_id = $("#room_id").html()
+
+		var formData = new FormData()
+		formData.append("avail_from", avail_from)
+		formData.append("avail_to", avail_to)
+		formData.append("rate", rate)
+		formData.append("capacity", capacity)
+		formData.append("description", description)
+		formData.append("campus", campus)
+		formData.append("occupied", occupied)
+		formData.append("room_id", room_id)
+
+		$.ajax({
+			url : "/edit_room",
+			type : "POST",
+			data : formData,
+			async : true,
+			processData : false,
+			contentType : false,
+			success : function(response){
+				// simply consider if the edit is successful
+				// then close the edit dialog
+				if(response == 'success'){
+					alert("Room details edited successfully ...")
+				}else{
+					alert("There was something wrong with editing room details ... ")
+				}
+
+				// disable the edit button and fadeout the dialog
+				$("#room_id").val('')
+				$("#myModal2 input").val('') // clear out the input entries
+				$("#edit_room_btn").attr("disabled", true)
+				$("#myModal2").fadeOut("fast") // fade out the dialog
+			}
+		})
+ 	})
 })
