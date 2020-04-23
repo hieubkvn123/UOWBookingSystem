@@ -9,6 +9,11 @@ $(document).ready(function(){
 		$("#myModal2 input").val('') // clear out the input entries
 	})
 
+	$("#close-modal3").click(function(){
+		$("#myModal3").fadeOut("fast")
+		$("#myModal3").val('')
+	})
+
 	var view_room = function(){
 		// just make a simple ajax request to server
 		var months = {
@@ -172,11 +177,29 @@ $(document).ready(function(){
 		view_room()
 	})
 
+	$("#add_room").click(function(){
+		// simply show dialog 
+		$("#myModal3").fadeIn("fast")
+	})
+
 	$("#myModal2 input").on("input", function(){
 		if($(this).val() == ""){
 			$("#edit_room_btn").attr("disabled", true)
 		}else{
 			$("#edit_room_btn").attr("disabled", false)
+		}
+	})
+
+	$("#myModal3 input").on("input", function(){
+		if($("#avail_from_").val() != "" &&
+		   $("#avail_to_").val() != "" &&
+		   $("#rate_").val() != "" &&
+		   $("#capacity_").val() != "" &&
+		   $("#description_").val() != "" &&
+		   $("#img_path_").val()){
+			$("#add_room_btn").attr("disabled", false)
+		}else{
+			$("#add_room_btn").attr("disabled", true)
 		}
 	})
 
@@ -265,5 +288,50 @@ $(document).ready(function(){
 				view_room() // refresh the room view
 			}
 		})
+ 	})
+
+ 	$("#add_room_btn").click(function(){
+ 		var avail_from = $("#avail_from_").val()
+ 		var avail_to = $("#avail_to_").val()
+ 		var rate = $("#rate_").val()
+ 		var capacity = $("#capacity_").val()
+ 		var campus = $("#campus_").val()
+ 		var occupied = $("#occupied").val()
+ 		var description = $("#description_").val()
+ 		var image = $("#img_path_").prop('files')[0]
+
+ 		var formData = new FormData()
+ 		formData.append("avail_from", avail_from)
+ 		formData.append("avail_to", avail_to)
+ 		formData.append("rate", rate)
+ 		formData.append("capacity", capacity)
+ 		formData.append("campus", campus)
+ 		formData.append("occupied", occupied)
+ 		formData.append("description", description)
+ 		formData.append("image", image)
+
+ 		$.ajax({
+ 			url : '/add_room',
+ 			type : 'POST',
+ 			data : formData,
+ 			async : true,
+ 			processData : false, 
+ 			contentType : false,
+ 			success : function(response){
+ 				if(response == "success"){
+ 					$("#myModal3").fadeOut("fast")
+ 					$("#myModal3 input").val('')
+ 					$("#add_room_btn").attr("disabled", true)
+ 					view_room()
+ 					alert("Room added successfully ... ")
+ 				}else{
+					$("#myModal3").fadeOut("fast")
+ 					$("#myModal3 input").val('')
+ 					$("#add_room_btn").attr("disabled", true)
+ 					view_room()
+ 					alert("There is something wrong while adding this room ... ")
+ 				}
+ 			}
+ 		})
  	})
 })

@@ -32,7 +32,7 @@
                 <a href="#" id="view_room">View Rooms</a>
             </li>
             <li>
-                <a href="#">Add Rooms</a>
+                <a href="#" id="add_room">Add Rooms</a>
             </li>
             <li>
                 <a href="#">Add Promo-code</a>
@@ -91,7 +91,6 @@
             <div class="modal-content2">
                 <span class="close" id = 'close-modal2'>&times;</span>
                 <span id = "modal-sub-info" style='color:green;font-weight: bolder;'>Room <span id="room_id"></span></span>
-                </p>
                 <div class="booking-form">
                   <div class="row">
                     <div class="col-sm-6">
@@ -150,6 +149,79 @@
                     <tr>
                       <td><button id = 'delete_room_btn' class='btn btn-primary'>Delete Room</button></td>
                       <td><button id = 'edit_room_btn' class='btn btn-primary' disabled="">Edit Room</button></td>
+                    </tr>
+                  </table>
+                </div>
+            </div>
+          </div>
+
+          <!-- The Modal -->
+          <div id="myModal3" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content3">
+                <span class="close" id = 'close-modal3'>&times;</span>
+                <span id = "modal-sub-info" style='color:green;font-weight: bolder;'>Create a new room</span>
+                <div class="booking-form" id = 'add_room_form' >
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <span class="form-label">Available from</span>
+                        <input class="form-control" type="date" required id = 'avail_from_' name = 'avail_from'>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <span class="form-label">Available to</span>
+                        <input class="form-control" type="date" required id = 'avail_to_' name = 'avail_to'>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <span class="form-label">Rate</span>
+                        <input class="form-control" type="text" required id = 'rate_' name = 'rate' placeholder="Per day rate in SGD">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <span class="form-label">Capacity</span>
+                        <input class="form-control" type="text" required id = 'capacity_' name = 'capacity' placeholder="Capacity">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <span class="form-label">Campus</span>
+                        <select id = 'campus_' class='form-control'>
+                          <option>Singapore Institute of Management</option>
+                          <option>UOW Wollongong Campus</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <span class="form-label">Occupied</span>
+                        <select id='occupied_' class='form-control'>
+                          <option>Yes</option>
+                          <option>No</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <span class="form-label">Description</span>
+                    <input class="form-control" type="text" placeholder="Add Description" id = 'description_' name = 'description'>
+                  </div>
+                  <div class="form-group">
+                    <span class="form-label">Image File</span>
+                    <input class="form-control" type="file" placeholder="Upload Room Image" id = 'img_path_' name = 'img_path' accept=".jpg, .png">
+                  </div>
+                  <table>
+                    <tr>
+                      <td><button id = 'add_room_btn' class='btn btn-primary' disabled="">Add Room</button></td>
                     </tr>
                   </table>
                 </div>

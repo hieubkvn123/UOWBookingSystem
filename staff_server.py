@@ -4,8 +4,9 @@ from flask import session
 from flask import redirect
 from flask import render_template
 from db_config import DB_CONFIG
+from werkzeug.utils import secure_filename
 
-
+import os
 import cv2
 import json
 import hashlib
@@ -15,6 +16,7 @@ import mysql.connector
 
 app = Flask(__name__)
 app.secret_key = "HieuDepTry"
+app.config['UPLOAD_FOLDER'] = 'static/img/rooms'
 
 PORT = 8081
 
@@ -232,6 +234,42 @@ def delete_room():
 	print("[INFO] Connection to database closed ... ")
 
 	if(cursor.rowcount > 0):
+		return "success"
+	else:
+		return "fail"
+
+@app.route("/add_room", methods = ['POST'])
+def add_room():
+	avail_from = request.form['avail_from']
+	avail_to = request.form['avail_to']
+	rate = request.form['rate']
+	capacity = request.form['capacity']
+	campus = request.form['campus']
+	occupied = request.form['occupied'] # actually it will be non-occupied by default
+	description = request.form['description']
+	image = request.files['image']
+
+	filename = secure_filename(image.filename)
+	abs_filename = '/static/img/rooms/' + filename 
+
+	sql = "INSERT INTO room_details VALUES(DEFAULT, %s, %s, %s, %s, %s, %s, %s, %s)"
+	val = (avail_from, avail_to, abs_filename, rate, description, capacity, campus, 0)
+
+	mydb = mysql.connector.connect(
+		host = DB_CONFIG['host'],
+		user = DB_CONFIG['user'],
+		password = DB_CONFIG['password'],
+		database = DB_CONFIG['database'],
+		auth_plugin = 'mysql_native_password'
+	)
+
+	cursor = mydb.cursor()
+	cursor.execute(sql, val)
+	mydb.commit()
+	mydb.close()
+
+	if(cursor.rowcount > 0):
+		image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 		return "success"
 	else:
 		return "fail"
