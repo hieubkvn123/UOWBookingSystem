@@ -4,6 +4,11 @@
     <meta charset="utf-8">
     <title>A simple, clean, and responsive HTML invoice template</title>
     <link type="text/css" rel="stylesheet" href="/static/css/invoice.css" />
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 </head>
 
 <body>
@@ -14,13 +19,13 @@
                     <table>
                         <tr>
                             <td class="title">
-                                <img src="/static/img/uow_icon.jpg" style="width:100; width:300">
+                                <img src="/static/img/uow_icon.jpg" style="width:50; width:150">
                             </td>
                             
                             <td>
                                 Invoice #: 123<br>
-                                Created: January 1, 2015<br>
-                                Due: February 1, 2015
+                                Created: <%=date_create%><br>
+                                Due: <%=date_due%>
                             </td>
                         </tr>
                     </table>
@@ -32,38 +37,17 @@
                     <table>
                         <tr>
                             <td>
-                                Sparksuite, Inc.<br>
-                                12345 Sunny Road<br>
-                                Sunnyville, CA 12345
+                                University of Wollongong, Australia<br>
+                                Northfields Avenue,<br>
+                                Wollongong NSW 2522
                             </td>
                             
                             <td>
-                                Acme Corp.<br>
-                                John Doe<br>
-                                john@example.com
+                                <%=name%><br>
+                                UOW ID - <%=uow_id%><br>
                             </td>
                         </tr>
                     </table>
-                </td>
-            </tr>
-            
-            <tr class="heading">
-                <td>
-                    Payment Method
-                </td>
-                
-                <td>
-                    Check #
-                </td>
-            </tr>
-            
-            <tr class="details">
-                <td>
-                    Check
-                </td>
-                
-                <td>
-                    1000
                 </td>
             </tr>
             
@@ -77,33 +61,28 @@
                 </td>
             </tr>
             
+            <%for(var i = 0; i < bookings.length; i++){%>
+            <%var total_price = 0%>
             <tr class="item">
                 <td>
-                    Website design
+                    Room # <%=bookings[i].room_id%>
                 </td>
                 
                 <td>
-                    $300.00
+                    $<%=(bookings[i].rate * num_days).toFixed(2)%>
+                    <%total_price += bookings[i].rate * num_days%>
                 </td>
             </tr>
-            
-            <tr class="item">
-                <td>
-                    Hosting (3 months)
-                </td>
-                
-                <td>
-                    $75.00
-                </td>
-            </tr>
+            <%}%>
             
             <tr class="item last">
                 <td>
-                    Domain name (1 year)
+                    Discount (<%=discount%> %)
                 </td>
                 
                 <td>
-                    $10.00
+                    <% var discount_amount = total_price * discount / 100 %>
+                    $<%=discount_amount.toFixed(2)%>
                 </td>
             </tr>
             
@@ -111,10 +90,11 @@
                 <td></td>
                 
                 <td>
-                   Total: $385.00
+                   Total: $<%=(total_price - discount_amount).toFixed(2)%>
                 </td>
             </tr>
         </table>
+        <button class = 'btn btn-primary' onclick='window.location.replace("/")'>Return to Home</button>
     </div>
 </body>
 </html>

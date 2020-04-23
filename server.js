@@ -98,36 +98,107 @@ app.post("/process_form", function(req, res){
 	// if yes, if code is invalid or unapplicable, return an error
 	// otherwise, calculate price with discount
 	var form = formidable.IncomingForm()
-	form.parse(req, function(err, fields, files){
-		// update the selected room status to occupied
-		var id_list = fields.id_list.split('-')
-		for(var i = 0; i < id_list.length - 1; i++){
-			var sql = 'UPDATE room_details SET occupied=1 WHERE room_id=' + id_list[i] 
-			connection.query(sql, function(err, results){
-				if(err) console.log(err)
-				else{
-					console.log("[INFO] Inserted to table room_details, " + results.affectedRows + " rows affected ... ")
+
+	const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+	// create a date gap calculation
+	var dateDiffInDays = function(a, b) {
+	  // Discard the time and time-zone information.
+	  const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+	  const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+
+	  return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+	}
+
+	// define an operation that records data into the database when success
+	var insert = function(room_id, data){	
+		var sql = "INSERT INTO bookings VALUES ?"
+		var values = [
+			[mysql.AUTO_INCREMENT, data.name, data.uow_id, data.checkin,
+			 data.checkout, data.checkin_time, data.checkout_time,
+			 data.num_people, data.category, data.campus, room_id]
+		]
+
+		connection.query(sql, [values], function(err, results){
+			if(err) { console.log(err) }
+			else{
+				if(results.affectedRows > 0){
+					console.log("Booking recorded in database ...")
+
+					// when inserted successfully, change room status to occupied
+					var sql = "UPDATE room_details SET occupied=1 WHERE room_id=" + room_id
+					connection.query(sql, function(err, results){
+						if(err){
+							console.log(err)
+						}else{
+							if(results.affectedRows > 0){
+								console.log("Room status changed at ID = " + room_id)
+							}else{
+								console.log("There is something wrong with updating room status ... ")
+							}
+						}
+					})
+				}else{
+					console.log("There is something wrong when recording booking ... ")
 				}
-			})
+			}
+		})
+	}
+	
+	form.parse(req, function(err, fields, files){
+		// first, check if the promocode is there
+		var id_list = fields.id_list.split('-')
+		req.session.id_list = JSON.stringify(id_list)
+		req.session.name = fields.name
+		req.session.uow_id = fields.uow_id
+		req.session.num_days = dateDiffInDays(new Date(fields.checkin), new Date(fields.checkout))
 
-			// then log information to the bookings table
-			var sql = "INSERT INTO bookings VALUES ?"
+		if(fields.promo_code == ""){
+			req.session.discount = 0 
+			for(var i = 0; i < id_list.length - 1; i++){
+				obj = {
+					name : fields.name,
+					uow_id : fields.uow_id,
+					checkin : fields.checkin,
+					checkout : fields.checkout,
+					checkin_time : fields.checkin_time,
+					checkout_time : fields.checkout_time,
+					num_people : fields.num_people,
+					category : fields.category, 
+					campus : fields.campus
+				}
 
-			var values = [
-				[mysql.AUTO_INCREMENT,fields.name, fields.uow_id,fields.checkin, 
-				fields.checkout, fields.checkin_time, fields.checkout_time,
-				fields.num_people, fields.category, fields.campus, id_list[i]]
-			]
+				insert(id_list[i], obj)
+			}
+			res.send("Good")
+		}else{
+			var sql = "SELECT * FROM promo_code WHERE code='" + fields.promo_code + "'"
+			connection.query(sql, function(err, results){
+				if(results.length > 0){ // the promo_code exists
+					// then initialize discount
+					req.session.discount = results[0].value
+					for(var i = 0; i < id_list.length - 1; i++){
+						obj = {
+							name : fields.name,
+							uow_id : fields.uow_id,
+							checkin : fields.checkin,
+							checkout : fields.checkout,
+							checkin_time : fields.checkin_time,
+							checkout_time : fields.checkout_time,
+							num_people : fields.num_people,
+							category : fields.category, 
+							campus : fields.campus
+						}
+						
+						insert(id_list[i], obj)
+					}
 
-			connection.query(sql, [values], function(err, results){
-				if(err) console.log(err)
-				else{
-					console.log("[INFO] Inserted to table room_details, " + results.affectedRows + " rows affected ... ")
+					res.send("Good")
+				}else{ // the promocode does not exists
+					res.send("Invalid")
 				}
 			})
 		}
-
-		res.send("Your booking has reached us successfully :3")
 	})
 })
 
@@ -256,8 +327,70 @@ app.post("/confirm_edit", function(req, res){
 	})
 })
 
-app.post("/payment", function(req, res){
-	res.render('payment')
+app.get("/payment", function(req, res){
+	var pad = function(num, size) {
+	    var s = num+"";
+	    while (s.length < size) s = "0" + s;
+	    return s;
+	}
+
+	var months = {
+		1 : "January",
+		2 : "Febuary",
+		3 : "March",
+		4 : "April",
+		5 : "May",
+		6 : "June",
+		7 : "July",
+		8 : "August",
+		9 : "September",
+		10: "October",
+		11: "November",
+		12: "December"
+	}
+
+	var date_create = new Date()
+	var date_create_str = months[date_create.getMonth() + 1] + " " + pad(date_create.getDate(), 2) + ", " + date_create.getFullYear()
+
+	var date_due = date_create
+	date_due.setDate(date_due.getDate() + 2)
+	var date_due_str = months[date_due.getMonth() + 1] + " " + pad(date_due.getDate(), 2) + ", " + date_due.getFullYear()
+	
+	// now query the price of every booked room 
+	var sql = "SELECT room_id, rate FROM room_details WHERE "
+	var id_list = JSON.parse(req.session.id_list)
+	for(var i = 0; i < id_list.length - 1; i++){
+		if(i == id_list.length - 2){ // if encounter last room
+			sql += " room_id=" + id_list[i]
+		}else{
+			sql += " room_id=" + id_list[i] + " OR "
+		}
+	}
+
+	connection.query(sql, function(err, results){
+		if(err){ console.log(err) }
+		else{
+			var objects = []
+			for(var i = 0; i < results.length; i++){
+				var obj = {}
+				obj['room_id'] = results[i].room_id
+				obj['rate'] = results[i].rate
+				objects.push(obj)
+			}
+
+			parameters = {
+				date_create : date_create_str,
+				date_due : date_due_str,
+				bookings : objects,
+				discount : req.session.discount,
+				name : req.session.name,
+				uow_id : req.session.uow_id,
+				num_days : req.session.num_days
+			}
+
+			res.render('payment', parameters)
+		}
+	})
 })
 
 console.log("[INFO] Starting Server ... ")

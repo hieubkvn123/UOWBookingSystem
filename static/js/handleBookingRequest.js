@@ -232,8 +232,10 @@ $(document).ready(function(){
 			var modal = document.getElementById("myModal");
 			var modal_p = document.getElementById('modal-p')
 
+			// get all data from the primary form
 			var name = document.getElementById('name').value
 			var uow_id = document.getElementById('uow_id').value
+			var promo_code = document.getElementById('promo_code').value
 			var check_in = document.getElementById('check-in-date').value
 			var check_out = document.getElementById('check-out-date').value
 			var check_in_time = document.getElementById('check-in-time').value
@@ -264,6 +266,7 @@ $(document).ready(function(){
 					// First, migrate all data from previous form to this form
 					$("#name_input").val(name)
 					$("#uow_id_input").val(uow_id)
+					$("#promo_code_input").val(promo_code)
 					$("#checkin_input").val(check_in)
 					$("#checkout_input").val(check_out)
 					$("#checkin_time_input").val(check_in_time)
@@ -374,6 +377,7 @@ $(document).ready(function(){
 			var formData = new FormData()
 			var name = document.getElementById('name_input').value
 			var uow_id = document.getElementById('uow_id_input').value
+			var promo_code = document.getElementById('promo_code_input').value
 			var checkin = document.getElementById('checkin_input').value
 			var checkout = document.getElementById('checkout_input').value
 			var checkin_time = document.getElementById('checkin_time_input').value
@@ -385,6 +389,7 @@ $(document).ready(function(){
 
 			formData.append('name', name)
 			formData.append('uow_id', uow_id)
+			formData.append('promo_code', promo_code)
 			formData.append('checkin', checkin)
 			formData.append('checkout', checkout)
 			formData.append('checkin_time', checkin_time)
@@ -403,7 +408,11 @@ $(document).ready(function(){
 				contentType : false,
 				success : function(response){
 					document.getElementById('myModal').style.display = 'none'
-					alert(response)
+					if(response == "Invalid"){
+						alert("This promo code is either invalid or is not applicable for you ...")
+					}else{
+						window.location.replace('/payment') // redirects to payment page
+					}
 					$("#id_list_input").val("")
 					selectedRooms = []
 				}
