@@ -9,7 +9,7 @@ $(document).ready(function(){
 		$("#myModal2 input").val('') // clear out the input entries
 	})
 
-	$("#view_room").click(function(){
+	var view_room = function(){
 		// just make a simple ajax request to server
 		var months = {
 			1 : "January",
@@ -166,6 +166,10 @@ $(document).ready(function(){
 				}	
 			}
 		})
+	}
+
+	$("#view_room").click(function(){
+		view_room()
 	})
 
 	$("#myModal2 input").on("input", function(){
@@ -182,6 +186,39 @@ $(document).ready(function(){
 		}else{
 			$("#edit_room_btn").attr("disabled", false)
 		}
+	})
+
+	// omg I swear to god 
+	// all I ask for is delete the damn room -_-
+	$("#delete_room_btn").click(function(){
+		var room_id = $("#room_id").html() // get room id
+		// then just send to server and bam
+		// gone
+		var formData = new FormData()
+		formData.append("room_id", room_id)
+
+		// just a simple good ol ajax
+		$.ajax({
+			url : "/delete_room",
+			type : "POST",
+			data : formData,
+			async : true,
+			processData : false,
+			contentType : false,
+			success : function(response){
+				if(response == "success"){
+					alert("Room deleted successfully ... ")
+				}else{
+					alert("There is something wrong while deleting this room ... ")
+				}
+
+				$("#room_id").val('')
+				$("#myModal2 input").val('') // clear out the input entries
+				$("#edit_room_btn").attr("disabled", true)
+				$("#myModal2").fadeOut("fast") // fade out the dialog
+				view_room() // refresh the room view
+			}
+		})
 	})
 
 	$("#edit_room_btn").click(function(){
@@ -225,6 +262,7 @@ $(document).ready(function(){
 				$("#myModal2 input").val('') // clear out the input entries
 				$("#edit_room_btn").attr("disabled", true)
 				$("#myModal2").fadeOut("fast") // fade out the dialog
+				view_room() // refresh the room view
 			}
 		})
  	})

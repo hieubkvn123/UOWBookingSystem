@@ -42,6 +42,8 @@ def login():
 	sql = "SELECT * FROM staffs WHERE uow_id=" + uow_id
 	cursor.execute(sql)
 	results = cursor.fetchall()
+	mydb.close()
+	print("[INFO] Connection to database closed ... ")
 
 	if(len(results) > 0): # Meaning the uow_id exists in the database
 		# now check for credentials details
@@ -57,7 +59,6 @@ def login():
 			return redirect('/user')
 		else:
 			return "<h1>Login failed</h1>"
-	mydb.close()
 
 @app.route('/user')
 def user():
@@ -89,6 +90,8 @@ def view_room():
 		cursor.execute(sql)
 
 		results = cursor.fetchall()
+		mydb.close()
+		print("[INFO] Connection to database closed ... ")
 
 		# store rooms in an array
 		objects = []
@@ -125,8 +128,6 @@ def view_room():
 	else: # invalid method
 		return redirect("/")
 
-	mydb.close()
-
 @app.route("/view_room_by_id", methods = ['POST'])
 def view_room_by_id():
 	room_id = request.form['room_id']
@@ -158,6 +159,7 @@ def view_room_by_id():
 
 	obj_str = json.dumps(obj)
 	mydb.close()
+	print("[INFO] Connection to database closed ... ")
 
 	return obj_str
 
@@ -198,13 +200,41 @@ def edit_room():
 	cursor = mydb.cursor()
 	cursor.execute(sql)
 	mydb.commit()
+
 	mydb.close()
+	print("[INFO] Connection to database closed ... ")
 
 	if(cursor.rowcount > 0):
 		return "success"
 	else:
 		return "fail"
 
+@app.route("/delete_room", methods = ['POST'])
+def delete_room():
+	room_id = request.form['room_id']
+
+	sql = "DELETE FROM room_details WHERE room_id=" + str(room_id)
+
+	# create a connection and close it
+	mydb = mysql.connector.connect(
+		host = DB_CONFIG['host'],
+		user = DB_CONFIG['user'],
+		password = DB_CONFIG['password'],
+		database = DB_CONFIG['database'],
+		auth_plugin = 'mysql_native_password'
+	)
+
+	cursor = mydb.cursor()
+	cursor.execute(sql)
+	mydb.commit()
+
+	mydb.close()
+	print("[INFO] Connection to database closed ... ")
+
+	if(cursor.rowcount > 0):
+		return "success"
+	else:
+		return "fail"
 
 if(__name__ == "__main__"):
 	app.run(debug = True, port = PORT)
