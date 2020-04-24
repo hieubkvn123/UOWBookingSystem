@@ -416,6 +416,35 @@ def qr_login():
 	else:
 		return "none"
 
+
+# just an add-on function
+# basically this function neutralizes the contrast and brightness of the image
+# the method is to use histogram equalization on the image
+# yep, you heard it, "equalization" means stretching out the frequent intensity
+# value so that the histogram of intensity of the overall image becomes less steep
+# less steep meaning less unusual bright or dark spots on the image
+# I use it to because I have a lamp that flares light straight into mah pretty face
+# this will help the computer a little bit in detecting my celebrity face
+def lumination_correct(img):
+	# basically lab means l*ab -> lightness and 2 color components
+	# we are gonna apply histogram equalization on that "l"
+	img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+	lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+
+	l, a, b = cv2.split(lab)
+
+	# apply adaptive histogram equalization
+	clahe = cv2.createCLAHE(clipLimit = 3.0, tileGridSize = (8,8))
+	l_clahe = clahe.apply(l)
+
+	# merge it back
+	lab_clahe = cv2.merge((l_clahe, a, b))
+
+	# convert back to BGR
+	final = cv2.cvtColor(lab_clahe, cv2.COLOR_LAB2BGR)
+
+	return final
+
 # sorry lecturer, idk what to do after I finish the project
 # so I added this in
 @app.route("/face_login", methods = ['POST'])
@@ -436,6 +465,8 @@ def face_login():
 
 	file = request.files['img']
 	img = face_recognition.load_image_file(file) # RGB image
+	img_bgr = lumination_correct(img) # now it is a BGR
+	img = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
 
 	# resize for faster processing
 	small_img = cv2.resize(img, (0,0), fx = 0.25, fy = 0.25)
