@@ -11,8 +11,16 @@ import cv2
 import json
 import hashlib
 import numpy as np 
-import pyzbar
+import time
+
+# need to install the zbar shared library first
+# by sudo apt-get install libzbar0 (linux)
+# or brew install libzbar0 (macos)
+# if ur windows users ur screwed cuz Idk how to help ya
+from pyzbar import pyzbar
 import mysql.connector
+
+from PIL import Image
 
 app = Flask(__name__)
 app.secret_key = "HieuDepTry"
@@ -308,6 +316,83 @@ def add_promo():
 			return 'success'
 		else:
 			return 'fail'
+
+@app.route("/qr_login", methods = ['POST'])
+def qr_login():
+	file = request.files['img']
+
+	# the default image in Pillow is RGB
+	img = Image.open(file).convert("RGB")
+
+	# convert to numpy array
+	img = np.array(img)
+
+	# convert RGB to BGR (which opencv uses)
+	img = img[:,:,::-1].copy()
+
+	# now just use pyzbar to decode the qr code
+	qr_codes = pyzbar.decode(img)
+
+	# assuming there is only one qr code inside
+	if(len(qr_codes) > 0):
+		qr_code = qr_codes[0]
+
+		# since the data is a byte string
+		# we have to decode it back to normal utf-8 string
+		qr_code_data = qr_code.data.decode('utf-8')
+
+		# now just anaylize the code and decide
+		# whether to grant access to this dude
+		# the qr code will have the format :
+		# <name>;<password>;<uow_id>
+		qr_data = qr_code_data.split(";")
+
+		# if we don't have all three data
+		# then this qr code is not valid
+		if(len(qr_data) < 3):
+			return "invalid"
+		else:
+			name = qr_data[0]
+			password = qr_data[1]
+			uow_id = qr_data[2]
+
+			print(name)
+			print(uow_id)
+
+			# again, resource efficiency
+			mydb = mysql.connector.connect(
+				host = DB_CONFIG['host'],
+				user = DB_CONFIG['user'],
+				password = DB_CONFIG['password'],
+				database = DB_CONFIG['database'],
+				auth_plugin = 'mysql_native_password'
+			)
+
+			cursor = mydb.cursor()
+
+			sql = "SELECT * FROM staffs WHERE uow_id=" + str(uow_id)
+			cursor.execute(sql)
+
+			results = cursor.fetchall()
+			print(results)
+			mydb.close()
+
+			if(len(results) < 1):
+				return 'auth_failed'
+			else:
+				# check if name and password is corrects
+				md5_password = hashlib.md5(password.encode()).hexdigest()
+				true_password = results[0][2]
+				true_name = results[0][0]
+
+				if(name == true_name and md5_password == true_password):
+					session['user'] = name
+					return 'auth_success-'+name 
+				else:
+					return 'auth_failed'
+		
+	else:
+		return "none"
 
 if(__name__ == "__main__"):
 	app.run(debug = True, port = PORT)

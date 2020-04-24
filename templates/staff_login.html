@@ -22,6 +22,7 @@
 	<!-- Custom stlylesheet -->
 	<link type="text/css" rel="stylesheet" href="/static/css/style.css" />
 	<link type="text/css" rel="stylesheet" href="/static/css/modal.css" />
+	<script src="/static/js/staffLogin.js"></script>
 </head>
 
 <body>
@@ -52,7 +53,7 @@
 							</div>		
 							<table style='width:100%'>
 							<tr>
-								<td><button style="width: 100%" class='btn btn-primary' id = 'qr_login'>QR Login</button></td>
+								<td><button style="width: 100%" class='btn btn-primary' id = 'qr_login' type='button'>QR Login</button></td>
 								<td><input style="width: 100%" type='submit' class='btn btn-primary' id = 'login' value="Login"></td>
 							</tr>
 						</table>
@@ -65,29 +66,17 @@
 </div>
 
 	<!-- The Modal -->
-	<div id="myModal" class="modal">
+	<div id="myModal2" class="modal">
 		<!-- Modal content -->
-		<div class="modal-content">
-		    <span class="close" id = 'close-modal'>&times;</span>
-		    <p id = 'modal-p'>Availability based on your input<br>
-		    <span id = "modal-sub-info" style='color:green'>(Please click on the room information to select)</span>
+		<div class="modal-content2">
+		    <span class="close" id = 'close-modal2'>&times;</span>
+		    <p id = 'modal-p'>Login using QR code<br>
+		    <span id = "modal-sub-info" style='color:green'>(Please face your QR code to the camera)</span>
 		    </p>
-		    <form action='/process_form' method = 'POST' id = 'final-booking-form'> 
-		    	<ul id="points_list" style='list-style-type: none'>
-		    	</ul>
-		    	<input type = 'text' name = 'name' id = 'name_input' hidden/>
-		    	<input type = 'text' name = 'uow_id' id = 'uow_id_input' hidden/>
-		    	<input type = 'text' name = 'promo_code' id = 'promo_code_input' hidden/>
-		    	<input type = 'date' name = 'check_in' id = 'checkin_input' hidden/>
-		    	<input type = 'date' name = 'check_out' id = 'checkout_input' hidden/>
-		    	<input type = 'time' name = 'check_in_time' id = 'checkin_time_input' hidden/>
-		    	<input type = 'time' name = 'check_out_time' id = 'checkout_time_input' hidden/>
-		    	<input type = 'text' name = 'num_people' id = 'num_people_input' hidden/>
-		    	<input type = 'text' name = 'category' id = 'category_input' hidden/>
-		    	<input type = 'text' name = 'campus' id = 'campus_input' hidden/>
-		    	<input type = 'text' name = 'id_list' id = 'id_list_input' hidden/>
-		    	<button class = 'btn btn-primary' type = 'button' id = 'place-order-btn' disabled="">Place Your Booking</button>
-			</form>
+		    <video id="qr_video" autoplay="" width= 480 height=360 style='margin: 0 auto;display: block'></video>
+
+		    <!-- Needs to be the same size as the vid-->
+		    <canvas id = "qr_canvas" hidden width=480 height=360></canvas>
 		</div>
 	</div>
 
