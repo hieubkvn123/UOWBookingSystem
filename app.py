@@ -528,5 +528,5 @@ def face_login():
 		return 'none'
 
 if(__name__ == "__main__"):
-	# debug mode
-	app.run(debug = True, port = PORT)
+	# production mode - without debug and put server ip
+	app.run(host='192.168.86.84', port = PORT)
