@@ -54,6 +54,7 @@ $(document).ready(function(){
 			success : function(response){
 				// the response is a json serialized string
 				var objects = JSON.parse(response)
+				var counter = 0
 
 				// clear whatever is in content div
 				$("#content_").empty()
@@ -68,6 +69,9 @@ $(document).ready(function(){
 					if(!String(objects[i].room_id).includes(String(search_room_id))){
 						continue
 					}
+
+					// increment counter
+					counter += 1
 					// convert checkin and checkout date to yyyy-mm-dd
 					console.log("Room number " + objects[i].room_id + " occupied : " + objects[i].occupied)
 
@@ -176,7 +180,16 @@ $(document).ready(function(){
 
 					$("#li_" + i)
 						.hide()
-						.fadeIn("slow")
+						.slideDown(400)
+				}
+
+				if(counter == 0){
+					$("<span>")
+						.css("color", "red")
+						.css("fontWeight", "bolder")
+						.css("fontSize", "28px")
+						.html("Sorry, No room found based on your input ... ")
+						.appendTo("#room_list")
 				}	
 			}
 		})
@@ -550,9 +563,7 @@ $(document).ready(function(){
  	})
 
  	$("#search_bar").on("input", function(){
- 		if($(this).val() == "")
- 			view_room()
- 		else
+ 		if($(this).val() != "")
  			search_room($(this).val())
 
  	})
