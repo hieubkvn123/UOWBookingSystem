@@ -1,7 +1,7 @@
 # UOWBookingSystem
 Staff/Student Room Booking System for UOW
 
-This project is a part of module CSIT 214 at the University of Wollongong
+This project is a part of module CSIT 214 - IT Project Management at the University of Wollongong
 
 # Frameworks and Languages used :
 	--> Staff portal : Flask (Python), JQuery
