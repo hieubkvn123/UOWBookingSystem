@@ -52,7 +52,6 @@
 #points_list li{
   border : 1px black outset;
   margin-bottom : 8px;
-  border-radius: 20px
 }
 
 #points_list li:hover {

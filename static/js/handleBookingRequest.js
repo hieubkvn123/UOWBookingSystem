@@ -82,9 +82,9 @@ $(document).ready(function(){
 							.attr("id", li_id)
 							.attr("width", "100%")
 							.css("border", '1px black outset')
-							.css('border-radius', '20px')
 							.css("margin", "8px")
 							.css("margin-top", "20px")
+							.css("box-shadow", "5px 10px #888888")
 							.appendTo("#booking-info")
 
 						$("<div>")
@@ -108,6 +108,8 @@ $(document).ready(function(){
 							.css("background", "red")
 							.css("display", "inline")
 							.css("margin", "8px")
+							.css("marginRight", "0px")
+							.css("marginTop", "0px")
 							.appendTo("#table_" + div_id)
 							.wrap("<td>")
 
@@ -120,6 +122,8 @@ $(document).ready(function(){
 							.css("background", "green")
 							.css("display", "inline")
 							.css("margin", "8px")
+							.css("marginLeft", "0px")
+							.css("marginTop", "0px")
 							.appendTo("#table_" + div_id)
 							.wrap("<td>")
 							
@@ -308,6 +312,7 @@ $(document).ready(function(){
 				    		$("<li>")
 				    			.attr("id", object.room_id)
 				    			.attr("selected", false)
+				    			.css("box-shadow", "5px 10px #888888")
 				    			.appendTo("#points_list")
 				    			.click(function(){
 				    				var id_list_field = $("#id_list_input")
