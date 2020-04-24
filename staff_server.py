@@ -60,7 +60,7 @@ def login():
 			session['user'] = name
 			return redirect('/user')
 		else:
-			return "<h1>Login failed</h1>"
+			return render_template('error.html')
 
 @app.route('/user')
 def user():
