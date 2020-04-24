@@ -56,12 +56,12 @@ $(document).ready(function(){
 				var objects = JSON.parse(response)
 
 				// clear whatever is in content div
-				$("#content").empty()
+				$("#content_").empty()
 
 				// append a list to the content
 				$("<ul>")
 					.attr("id", "room_list")
-					.appendTo("#content")
+					.appendTo("#content_")
 
 				// each room is a list item
 				for(var i = 0; i < objects.length; i++){
