@@ -2,9 +2,10 @@ $(document).ready(function(){
 	var vidStream // for later use
 	var interval
 
-	$("#close-modal2").click(function(){
-		console.log("close modal clicked")
+	var vidStream2
+	var interval2
 
+	$("#close-modal2").click(function(){
 		vid = document.getElementById("qr_video")
 
 		// pause the video
@@ -20,6 +21,76 @@ $(document).ready(function(){
 		clearInterval(interval)
 
 		$("#myModal2").fadeOut("fast")
+	})
+
+	$("#close-modal3").click(function(){
+		vid = document.getElementById("face_video")
+
+		// pause the video
+		vid.pause()
+
+		// suspend the video source, which is user webcam
+		vid.src = ""
+
+		// stop all tracks
+		vidStream2.getTracks()[0].stop()
+
+		// clear the interval
+		clearInterval(interval2)
+
+		$("#myModal3").fadeOut("fast")
+	})
+
+	$("#face_login").click(function(){
+		$("#myModal3").fadeIn("fast")
+
+		var video = document.getElementById("face_video")
+		var canvas = document.getElementById("face_canvas")
+		var recordingHint = {'video' : true}
+
+		navigator.mediaDevices.getUserMedia(recordingHint).then(function(camera){
+			vidStream2 = camera
+			video.srcObject = camera
+
+			// send frame to server every one second
+			interval2 = setInterval(function(){
+				var context = canvas.getContext("2d")
+				var width = video.width
+				var height = video.height
+
+				context.drawImage(video, 0, 0, width, height)
+
+				var dataURL = canvas.toDataURL().split(",")[1]
+				var blobBin = atob(dataURL)
+				var array = []
+
+				for(var i = 0; i < blobBin.length; i++){
+					array.push(blobBin.charCodeAt(i))
+				}
+
+				var blob = new Blob([new Uint8Array(array)], {type : 'img/jpg'})
+				var formData = new FormData()
+				formData.append("img", blob)
+
+				$.ajax({
+					url : "/face_login",
+					type : "POST",
+					data : formData, 
+					async : true,
+					processData : false,
+					contentType : false,
+					success : function(response){
+						// success, fail or none
+						if(response == 'none' || response == 'fail')
+							console.log("Pending Face Authentication ... ")
+						else{
+							alert("Access Granted ... ")
+							window.location.replace("/user")
+						}
+					}
+				})
+			}, 1000)
+		})
 	})
 
 	$("#qr_login").click(function(){

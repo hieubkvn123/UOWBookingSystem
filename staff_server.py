@@ -5,12 +5,14 @@ from flask import redirect
 from flask import render_template
 from db_config import DB_CONFIG
 from werkzeug.utils import secure_filename
+from scipy.spatial.distance import cosine
 
 import os
 import cv2
 import json
 import hashlib
 import numpy as np 
+import face_recognition
 import time
 
 # need to install the zbar shared library first
@@ -26,9 +28,29 @@ app = Flask(__name__)
 app.secret_key = "HieuDepTry"
 app.config['UPLOAD_FOLDER'] = 'static/img/rooms'
 
-PORT = 8081
 
+PORT = 8081
+FACE_DIR = 'faces/'
 print("[INFO] Connection to database established ... ")
+
+# load known face encodings for staff recognition
+# basically encodings here are the 128-element features vector of the face
+# it is theoritically similar to principal component analysis of vector
+# the difference is that face encoding is extracted using deep learning which
+# is a stochastic process while PCA is plain mathemtics and the solutions are always absolute
+# (Don't mind if I write them out, I'm just revising)
+known_encodings = []
+known_names = []
+
+for (dir, dirs, files) in os.walk(FACE_DIR):
+	for file in files:
+		img = face_recognition.load_image_file(FACE_DIR + file)
+		img = cv2.resize(img, (0,0), fx = 0.25, fy = 0.25) # basically resize the image for faster preprocessing
+		encoding = face_recognition.face_encodings(img)[0]
+
+		known_encodings.append(encoding)
+		known_names.append(file.split('.')[0])
+ 
 
 @app.route("/")
 def home():
@@ -393,6 +415,86 @@ def qr_login():
 		
 	else:
 		return "none"
+
+# sorry lecturer, idk what to do after I finish the project
+# so I added this in
+@app.route("/face_login", methods = ['POST'])
+def face_login():
+	# so far face recognition has most popular methods (or at least to the best of my knowledge)
+	# 1. Recognize the face using geometrical traits (distance between landmarks and area of triangular shapes on faces)
+	# 2. using a infarred camera to project thousands of points on the face (Apple using it) - expensive -.-
+	# 3. using deep learning to extract principal features (embeddings) represented as flat vectors
+	#    then use a classification algorithm on those vectors, or simply use euclidean distance or cosine similarity
+	#    to compare new faces with faces in the database
+	#    the face_recognition module is a deep neural network that uses the third method, trained with over 3 millions images
+	#    ---> a perfect module for this task :3
+	#    (again, don't mind me writing them out)
+
+
+	EUCLIDEAN_THRESHOLD = 0.35 # measure distance of vectors
+	COSINE_THRESHOLD = 0.965 # measure similarity of vectors
+
+	file = request.files['img']
+	img = face_recognition.load_image_file(file) # RGB image
+
+	# resize for faster processing
+	small_img = cv2.resize(img, (0,0), fx = 0.25, fy = 0.25)
+	locations = face_recognition.face_locations(small_img)
+	encodings = face_recognition.face_encodings(small_img, locations)
+
+	if(len(encodings) > 0):
+		names = []
+		for encoding in encodings:
+			# compare the faces
+			# tolerance is euclidean distance threshold 
+			# the closer the encoding to the known encoding
+			# the higher the probability it is a match 
+			matches = face_recognition.compare_faces(known_encodings, encoding, tolerance = 0.35)
+
+			# compute the distance of this encoding to known encodings
+			face_distances = face_recognition.face_distance(known_encodings, encoding)
+
+			# get the index of the closest known encoding to this encoding
+			best_match_index = np.argmin(face_distances)
+
+			# check if that closest encoding is actually a match
+			if(matches[best_match_index]):
+				# we are not done yet, have to check if this encoding
+				# satisfies the cosine similarity condition
+				# cosine_similarity = 1 - (u.v)/(||u||.||v||)
+				#                   = 1 - cosine(u, v)
+				similarity = 1 - cosine(known_encodings[best_match_index], encoding)
+				if(similarity >= COSINE_THRESHOLD):
+					# check the database who this dude is
+					mydb = mysql.connector.connect( # resource efficiency, remember
+						# actually the reason is that mysql concurrency is limited when 
+						# an object holds the connection
+						# that's why I have to create and close connection continuously
+						host = DB_CONFIG['host'],
+						user = DB_CONFIG['user'],
+						password = DB_CONFIG['password'],
+						database = DB_CONFIG['database'],
+						auth_plugin = 'mysql_native_password'
+					)
+
+					cursor = mydb.cursor()
+					sql = "SELECT name FROM staffs WHERE uow_id=" + known_names[best_match_index]
+					cursor.execute(sql)
+					result = cursor.fetchall()
+
+					mydb.close()
+
+					staff_name = result[0][0]
+					session['user'] = staff_name
+
+					return 'success'
+				else:
+					return 'fail'
+			else:
+				return 'fail'
+
+	else:
+		return 'none'
 
 if(__name__ == "__main__"):
 	app.run(debug = True, port = PORT)
