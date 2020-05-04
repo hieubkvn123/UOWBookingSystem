@@ -113,7 +113,9 @@ $(document).ready(function(){
 
                   // we can do it like this :
                   // 1. If the room is already approved -> then we disable editing
-                  // 2. 
+                  // 2. If the room has not been approved -> allow the admin to edit room before approval
+                  // 1. Approved -> Allow disapproval  
+                  // 2. Pending -> Approved or Disapprove
                   $("#avail_from__").val(avail_from_str)
                   $("#avail_to__").val(avail_to_str)
 
