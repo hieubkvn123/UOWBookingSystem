@@ -15,7 +15,7 @@ var connection = mysql.createConnection(DB_CONFIG)
 connection.connect(function(err){
 	if(err){
 		console.log("[ERROR] There is some problem connecting to database ... ")
-		throw err 
+		throw err
 	}else{
 		console.log("[INFO] Connection to database established ... ")
 	}
@@ -53,17 +53,19 @@ app.post('/book', function(req, res){
 		var campus = fields.campus
 
 		// we need to find room with avail_from before check in
-		var condition0 = " occupied <> 1" 
+		var condition0 = " occupied <> 1"
 		var condition1 = " avail_from < '" + check_in + "'"
 		var condition2 = " avail_to > '" + check_out + "'"
 		var condition3 = " capacity >= " + num_people + ""
 		var condition4 = " campus = '" + campus + "'"
+		var condition5 = " approved = 1"
 
 		var sql = "SELECT * FROM room_details WHERE " + condition0 + " AND "
 		sql += condition1 + " AND "
 		sql += condition2 + " AND "
 		sql += condition3 + " AND "
-		sql += condition4 
+		sql += condition4 + " AND "
+		sql += condition5
 
 		// console.log(sql)
 
@@ -111,7 +113,7 @@ app.post("/process_form", function(req, res){
 	}
 
 	// define an operation that records data into the database when success
-	var insert = function(room_id, data){	
+	var insert = function(room_id, data){
 		var sql = "INSERT INTO bookings VALUES ?"
 		var values = [
 			[mysql.AUTO_INCREMENT, data.name, data.uow_id, data.checkin,
@@ -144,7 +146,7 @@ app.post("/process_form", function(req, res){
 			}
 		})
 	}
-	
+
 	form.parse(req, function(err, fields, files){
 		// first, check if the promocode is there
 		var id_list = fields.id_list.split('-')
@@ -154,7 +156,7 @@ app.post("/process_form", function(req, res){
 		req.session.num_days = dateDiffInDays(new Date(fields.checkin), new Date(fields.checkout))
 
 		if(fields.promo_code == ""){
-			req.session.discount = 0 
+			req.session.discount = 0
 			for(var i = 0; i < id_list.length - 1; i++){
 				obj = {
 					name : fields.name,
@@ -164,7 +166,7 @@ app.post("/process_form", function(req, res){
 					checkin_time : fields.checkin_time,
 					checkout_time : fields.checkout_time,
 					num_people : fields.num_people,
-					category : fields.category, 
+					category : fields.category,
 					campus : fields.campus
 				}
 
@@ -186,10 +188,10 @@ app.post("/process_form", function(req, res){
 							checkin_time : fields.checkin_time,
 							checkout_time : fields.checkout_time,
 							num_people : fields.num_people,
-							category : fields.category, 
+							category : fields.category,
 							campus : fields.campus
 						}
-						
+
 						insert(id_list[i], obj)
 					}
 
@@ -215,7 +217,7 @@ app.post('/check_booking', function(req, res){
 				var obj = {}
 				obj['booking_id'] = results[i].booking_id
 				obj['checkin'] = results[i].checkin
-				obj['checkout'] = results[i].checkout 
+				obj['checkout'] = results[i].checkout
 				obj['room_id'] = results[i].room_id
 				obj['campus']  = results[i].campus
 				objects.push(obj)
@@ -274,9 +276,9 @@ app.post("/edit_booking", function(req, res){
 			var name = result.name
 			var uow_id = result.uow_id
 			var checkin = result.checkin
-			var checkout = result.checkout 
+			var checkout = result.checkout
 			var checkin_time = result.checkin_time
-			var checkout_time = result.checkout_time 
+			var checkout_time = result.checkout_time
 
 			obj = {
 				'booking_id' : booking_id,
@@ -301,9 +303,9 @@ app.post("/confirm_edit", function(req, res){
 		var name = fields.name
 		var uow_id = fields.uow_id
 		var checkin = fields.checkin
-		var checkout = fields.checkout 
-		var checkin_time = fields.checkin_time 
-		var checkout_time = fields.checkout_time 
+		var checkout = fields.checkout
+		var checkin_time = fields.checkin_time
+		var checkout_time = fields.checkout_time
 
 		var sql = "UPDATE bookings SET name='" + name + "'"
 		sql += ", uow_id=" + uow_id
@@ -355,8 +357,8 @@ app.get("/payment", function(req, res){
 	var date_due = date_create
 	date_due.setDate(date_due.getDate() + 2)
 	var date_due_str = months[date_due.getMonth() + 1] + " " + pad(date_due.getDate(), 2) + ", " + date_due.getFullYear()
-	
-	// now query the price of every booked room 
+
+	// now query the price of every booked room
 	var sql = "SELECT room_id, rate FROM room_details WHERE "
 	var id_list = JSON.parse(req.session.id_list)
 	for(var i = 0; i < id_list.length - 1; i++){

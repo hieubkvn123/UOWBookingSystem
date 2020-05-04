@@ -124,7 +124,10 @@ def view_room():
 			database = DB_CONFIG['database'],
 			auth_plugin = 'mysql_native_password'
 		)
-		sql = "SELECT * FROM room_details"
+
+		# only allowed to edit rooms that are approved
+		# for normal staff
+		sql = "SELECT * FROM room_details WHERE approved = 1"
 		cursor = mydb.cursor()
 
 		cursor.execute(sql)
@@ -159,6 +162,66 @@ def view_room():
 			obj['capacity'] = str(result[6])
 			obj['campus'] = result[7]
 			obj['occupied'] = str(result[8])
+
+			objects.append(obj)
+
+		obj_str = json.dumps(objects)
+		return obj_str
+
+	else: # invalid method
+		return redirect("/")
+
+@app.route("/view_status", methods = ['POST'])
+def view_status():
+	if(request.method == 'POST'):
+		mydb = mysql.connector.connect(
+			host = DB_CONFIG['host'],
+			user = DB_CONFIG['user'],
+			password = DB_CONFIG['password'],
+			database = DB_CONFIG['database'],
+			auth_plugin = 'mysql_native_password'
+		)
+
+
+		# only admin staffs have access to this feature
+		# so we are not going to exclude anything
+		sql = "SELECT * FROM room_details"
+		cursor = mydb.cursor()
+
+		cursor.execute(sql)
+
+		results = cursor.fetchall()
+		mydb.close()
+		print("[INFO] Connection to database closed ... ")
+
+		# store rooms in an array
+		objects = []
+		for result in results:
+			obj = {}
+
+			# 0. room_id
+			# 1. avail_from - date
+			# 2. avail_to   - date
+			# 3. img_path   - str
+			# 4. rate - numeric
+			# 5. description - str
+			# 6. capacity - numeric
+			# 7. campus - str
+			# 8. occupied - boolean
+			# 9. approved - boolean
+			obj['room_id'] = result[0]
+
+			# since date is not json serializable
+			# we need to preprocess these data
+			obj['avail_from'] = str(result[1].year) + '-' + str(result[1].month) + '-' + str(result[1].day)
+			obj['avail_to'] = str(result[2].year) + '-' + str(result[2].month) + '-' + str(result[2].day)
+			obj['img_path'] = result[3]
+			obj['rate'] = str(result[4])
+			obj['description'] = result[5]
+			obj['capacity'] = str(result[6])
+			obj['campus'] = result[7]
+			obj['occupied'] = str(result[8])
+			obj['approved'] = str(result[9])
 
 			objects.append(obj)
 
@@ -290,8 +353,16 @@ def add_room():
 	filename = secure_filename(image.filename)
 	abs_filename = '/static/img/rooms/' + filename
 
-	sql = "INSERT INTO room_details VALUES(DEFAULT, %s, %s, %s, %s, %s, %s, %s, %s)"
-	val = (avail_from, avail_to, abs_filename, rate, description, capacity, campus, 0)
+	sql = "INSERT INTO room_details VALUES(DEFAULT, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
+	approved = 0
+
+	# if the staff that adds this room is the admin
+	# it will automatically approved
+	if(session['admin']):
+		approved = 1
+
+	val = (avail_from, avail_to, abs_filename, rate, description, capacity, campus, 0, approved)
 
 	mydb = mysql.connector.connect(
 		host = DB_CONFIG['host'],
