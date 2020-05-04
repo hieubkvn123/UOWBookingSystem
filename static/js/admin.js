@@ -3,6 +3,9 @@ $(document).ready(function(){
     $("#myModal1").fadeOut("fast")
   })
 
+  $("#close-modal5").click(function(){
+    $("#myModal5").fadeOut("fast")
+  })
   var view_status = function(){
     // just make a simple ajax request to server
     var months = {
@@ -49,8 +52,6 @@ $(document).ready(function(){
         // each room is a list item
         for(var i = 0; i < objects.length; i++){
           // convert checkin and checkout date to yyyy-mm-dd
-          console.log("Room number " + objects[i].room_id + " occupied : " + objects[i].occupied)
-
           var color = "yellow"
           var tooltipContent = "Pending Approval"
           if(objects[i].approved == 1)
@@ -68,12 +69,13 @@ $(document).ready(function(){
             .attr("description", objects[i].description)
             .attr("approved", objects[i].approved)
             .attr("id", "li_" + i)
+            .attr("title", objects[i].approved == 1 ? "Approved" : "Pending Approval")
             .css('listStyleType', 'none')
             .css('margin', '20px')
             .css("opacity", 1.0)
             .css('box-shadow', '5px 10px #888888')
             .css("border", "1px outset " + color)
-            .tooltip({ show: { effect: "blind", duration: 800, content : tooltipContent } })
+            .tooltip({ show: { effect: "blind", duration: 200, content : tooltipContent } })
             .hover(function(){ // hover in
               $(this).css("opacity", 0.8)
               $(this).css("cursor", "pointer")
@@ -103,7 +105,6 @@ $(document).ready(function(){
                   // upon receiving the response the information about
                   // the room is present
                   obj = JSON.parse(response)
-                  console.log(response)
 
                   var avail_from = new Date(obj.avail_from)
                   var avail_to = new Date(obj.avail_to)
@@ -150,6 +151,7 @@ $(document).ready(function(){
                     $("#approve_btn").show()
                     $("#disapprove_btn").show()
                     $("#footer-text").html('')
+                    $("#occupied__").attr("disabled", true)
                     $("#edit-status-form input").attr("disabled", false)
                     $("#edit-status-form select").attr("disabled", false)
                   }
@@ -204,6 +206,33 @@ $(document).ready(function(){
   // when admin disapprove a room
   // just modify its info in the DATABASE
   // then reload the view
+  $("#disapprove_btn").click(function(){
+    var room_id = $("#room_id_").html()
+
+    var formData = new FormData()
+    formData.append("room_id", room_id)
+
+    // just send the room id to server
+    // for deletion
+    $.ajax({
+      url : '/delete_room',
+      type : 'POST',
+      async : true,
+      data : formData,
+      processData : false,
+      contentType : false,
+      success : function(response){
+        if(response == 'success'){
+          alert("Room " + room_id + " is disapproved and deleted ... ")
+          $("#myModal1").fadeOut("fast")
+          view_status()
+        }else{
+          alert("There is something wrong with deleting this room ... ")
+        }
+      }
+    })
+  })
+
   $("#approve_btn").click(function(){
     // first, get the room id
     var room_id = $("#room_id_").html()
@@ -215,6 +244,21 @@ $(document).ready(function(){
     // we need to send all of the info to the server as well
     // in case the admin changed something
 
+    // obtain all necessary information
+    var avail_from = $("#avail_from__").val()
+    var avail_to = $("#avail_to__").val()
+    var rate = $("#rate__").val()
+    var description = $("#description__").val()
+    var capacity = $("#capacity__").val()
+    var campus = $("#campus__").val()
+
+    formData.append("avail_from", avail_from)
+    formData.append("avail_to", avail_to)
+    formData.append("rate", rate)
+    formData.append("description", description)
+    formData.append("capacity", capacity)
+    formData.append("campus", campus)
+
     $.ajax({
       url : "/approve_room",
       type : "POST",
@@ -224,14 +268,18 @@ $(document).ready(function(){
       contentType : false,
       success : function(response){
         if(response == "success"){
-          $("#myModal1").slideUp("fast")
           alert("Room " + room_id + " has been approved and will be publicly shown to users ... ")
+          $("#myModal1").fadeOut("fast")
           view_status()
         }else{
-          $("#myModal1").slideUp("fast")
+          $("#myModal1").fadeOut("fast")
           alert("There is some thing wrong happened ... ")
         }
       }
     })
+  })
+
+  $("#view_room_usage").click(function(){
+    $("#myModal5").fadeIn("fast")
   })
 })

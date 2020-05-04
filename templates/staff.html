@@ -16,7 +16,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.ui.position.js"></script>
     <title>Welcome {{name}}</title>
     <link rel="icon" type="image/gif" href="/static/img/uow_icon.jpg" />
 
@@ -38,6 +41,9 @@
               {% if admin %}
                 <li>
                     <a href="#" id="view_room_status">View Room Status</a>
+                </li>
+                <li>
+                    <a href="#" id="view_room_usage">View Room Usage</a>
                 </li>
               {%endif%}
             {%endblock%}
@@ -339,6 +345,36 @@
                   </table>
                 </div>
             </div>
+          </div>
+
+          <!-- The Modal -->
+          <div id="myModal5" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content5">
+                <span class="close" id = 'close-modal5'>&times;</span>
+                <span id = "modal-sub-info" style='color:green;font-weight: bolder;'>Room <span id="room_id_"></span></span>
+                <div class="booking-form" id="edit-status-form" >
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <span class="form-label">From Date</span>
+                        <input class="form-control" type="date" required id = 'from_date' name = 'avail_from_'>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <span class="form-label">To Date</span>
+                        <input class="form-control" type="date" required id = 'to_date' name = 'avail_to_'>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <span class="form-label">Room ID</span>
+                    <select class="form-control" placeholder="Add Description" id = 'room_id_usage_view' name = 'room_id_usage_view'>
+
+                    </select>
+                  </div>
+                </div>
           </div>
 
     <!--JQuery and Bootstrap -->

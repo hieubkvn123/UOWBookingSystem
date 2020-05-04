@@ -621,6 +621,12 @@ def face_login():
 def approve_room():
 	if request.method == 'POST' :
 		room_id = request.form['room_id']
+		avail_from = request.form['avail_from']
+		avail_to = request.form['avail_to']
+		rate = request.form['rate']
+		description = request.form['description']
+		capacity = request.form['capacity']
+		campus = request.form['campus']
 
 		mydb = mysql.connector.connect(
 			host = DB_CONFIG['host'],
@@ -632,7 +638,14 @@ def approve_room():
 
 		cursor = mydb.cursor()
 
-		sql = "UPDATE room_details SET approved = 1 WHERE room_id=" + str(room_id)
+		sql = "UPDATE room_details SET approved = 1, "
+		sql += " avail_from = '" + str(avail_from) + "', "
+		sql += " avail_to = '" + str(avail_to) + "', "
+		sql += " rate = " + str(rate) + ", "
+		sql += " description = '" + description + "', "
+		sql += " capacity = " + str(capacity) + ", "
+		sql += " campus = '" + campus + "' "
+		sql += "WHERE room_id=" + str(room_id)
 		cursor.execute(sql)
 
 		mydb.commit()
