@@ -87,3 +87,7 @@
 #confirm_edit {
   margin : 8px;
 }
+
+.menu_item {
+  line-style-type : none
+}

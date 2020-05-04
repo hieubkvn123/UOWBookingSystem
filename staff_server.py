@@ -99,7 +99,7 @@ def login():
 
 @app.route('/user')
 def user():
-	if(session['user'] != None):
+	if(session['user']):
 		user = session['user']
 		admin = False
 		if(session['admin']):
