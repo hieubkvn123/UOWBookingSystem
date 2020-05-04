@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/static/css/staff.css">
     <link rel="stylesheet" href="/static/css/staff_.css">
@@ -22,7 +22,7 @@
 
   </head>
   <body>
-    
+
     <div class="wrapper d-flex align-items-stretch">
       <nav id="sidebar">
         <div class="p-4 pt-5">
@@ -37,6 +37,16 @@
             <li>
                 <a href="#" id="add_promo">Add Promo-code</a>
             </li>
+            <!--So if a staff is an admin-->
+            <!--He/She has the basic functions of a staff-->
+            <!--Plus approving released rooms-->
+            {%block staff%}
+              {% if admin %}
+                <li>
+                    <a href="#" id="view_room_status">View Room Status</a>
+                </li>
+              {%endif%}
+            {%endblock%}
             <li>
                 <a href="/logout">Logout</a>
             </li>
@@ -113,7 +123,7 @@
                     </tr>
                   </table>
                   </div>
-                  
+
                 </div>
             </div>
     <!-- The Modal -->

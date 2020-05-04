@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS bookings (
 	campus VARCHAR(100) NOT NULL,
 	room_id INT NOT NULL,
 	PRIMARY KEY (booking_id),
-	FOREIGN KEY (room_id) REFERENCES room_details(room_id) 
+	FOREIGN KEY (room_id) REFERENCES room_details(room_id)
 	ON DELETE CASCADE
 );
 
@@ -59,15 +59,18 @@ CREATE TABLE IF NOT EXISTS staffs (
 	name VARCHAR(30) NOT NULL,
 	uow_id INT(8) NOT NULL,
 	password VARCHAR(100) NOT NULL,
+	admin BOOLEAN NOT NULL,
 	PRIMARY KEY (uow_id)
 );
 
 # insert some demo data
-# password is md5 equivalence of 'hieu30042000'
-INSERT INTO staffs VALUES("Nong Minh Hieu", 6216602, "f5417858515f50a91edb795bbbe2f3b2");
 
 # password is md5 equivalence of 'justinxin'
-INSERT INTO staffs VALUES("Justin Xin", 6216603, "ec5f6c2d6f8238278bab75c2e9c56b86");
+INSERT INTO staffs VALUES("Justin Xin", 6216603, "ec5f6c2d6f8238278bab75c2e9c56b86", 0);
+
+# create a new admin account
+# password is md5 equivalence of 'HieuDepTry'
+INSERT INTO staffs VALUES("Hieu Handsome", 6216602, "185d50608d0044c5cdbad284052bf9b4", 1);
 
 # create a table for promo code
 CREATE TABLE IF NOT EXISTS promo_code (

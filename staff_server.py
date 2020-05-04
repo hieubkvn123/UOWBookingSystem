@@ -1,4 +1,4 @@
-from flask import Flask 
+from flask import Flask
 from flask import request
 from flask import session
 from flask import redirect
@@ -11,7 +11,7 @@ import os
 import cv2
 import json
 import hashlib
-import numpy as np 
+import numpy as np
 import face_recognition
 import time
 
@@ -50,7 +50,7 @@ for (dir, dirs, files) in os.walk(FACE_DIR):
 
 		known_encodings.append(encoding)
 		known_names.append(file.split('.')[0])
- 
+
 
 @app.route("/")
 def home():
@@ -84,10 +84,15 @@ def login():
 		# 1. Name of staff
 		# 2. UOW ID
 		# 3. Password
+		# 4. A staff or an admin
 		password_md5 = hashlib.md5(password.encode()).hexdigest() # hash password using md5 -> get the hexadecimal string -> decode it
 
 		if(result[0] == name and result[2] == password_md5):
 			session['user'] = name
+			if(result[3] == 1):
+				session['admin'] = True
+			else:
+				session['admin'] = False
 			return redirect('/user')
 		else:
 			return render_template('error.html')
@@ -96,7 +101,10 @@ def login():
 def user():
 	if(session['user'] != None):
 		user = session['user']
-		return render_template('staff.html', name=user)
+		admin = False
+		if(session['admin']):
+			admin = True
+		return render_template('staff.html', name=user, admin = admin)
 	else:
 		return redirect("/")
 
@@ -215,10 +223,10 @@ def edit_room():
 	sql += "avail_from = '" + avail_from + "'"
 	sql += ",avail_to = '" + avail_to + "'"
 	sql += ",rate = " + str(rate)
-	sql += ",capacity = " + str(capacity) 
+	sql += ",capacity = " + str(capacity)
 	sql += ",description = '" + description + "'"
 	sql += ",campus = '" + campus + "'"
-	sql += ",occupied = " + str(occupied) 
+	sql += ",occupied = " + str(occupied)
 	sql += " WHERE room_id=" + str(room_id)
 
 	mydb = mysql.connector.connect(
@@ -280,7 +288,7 @@ def add_room():
 	image = request.files['image']
 
 	filename = secure_filename(image.filename)
-	abs_filename = '/static/img/rooms/' + filename 
+	abs_filename = '/static/img/rooms/' + filename
 
 	sql = "INSERT INTO room_details VALUES(DEFAULT, %s, %s, %s, %s, %s, %s, %s, %s)"
 	val = (avail_from, avail_to, abs_filename, rate, description, capacity, campus, 0)
@@ -409,10 +417,15 @@ def qr_login():
 
 				if(name == true_name and md5_password == true_password):
 					session['user'] = name
-					return 'auth_success-'+name 
+					if(results[0][3]):
+						session['admin'] = True
+					else:
+						session['admin'] = False
+
+					return 'auth_success-'+name
 				else:
 					return 'auth_failed'
-		
+
 	else:
 		return "none"
 
@@ -447,6 +460,7 @@ def lumination_correct(img):
 
 # sorry lecturer, idk what to do after I finish the project
 # so I added this in
+# dont mind me :3
 @app.route("/face_login", methods = ['POST'])
 def face_login():
 	# so far face recognition has most popular methods (or at least to the best of my knowledge)
@@ -477,9 +491,9 @@ def face_login():
 		names = []
 		for encoding in encodings:
 			# compare the faces
-			# tolerance is euclidean distance threshold 
+			# tolerance is euclidean distance threshold
 			# the closer the encoding to the known encoding
-			# the higher the probability it is a match 
+			# the higher the probability it is a match
 			matches = face_recognition.compare_faces(known_encodings, encoding, tolerance = 0.35)
 
 			# compute the distance of this encoding to known encodings
@@ -498,7 +512,7 @@ def face_login():
 				if(similarity >= COSINE_THRESHOLD):
 					# check the database who this dude is
 					mydb = mysql.connector.connect( # resource efficiency, remember
-						# actually the reason is that mysql concurrency is limited when 
+						# actually the reason is that mysql concurrency is limited when
 						# an object holds the connection
 						# that's why I have to create and close connection continuously
 						host = DB_CONFIG['host'],
@@ -509,7 +523,7 @@ def face_login():
 					)
 
 					cursor = mydb.cursor()
-					sql = "SELECT name FROM staffs WHERE uow_id=" + known_names[best_match_index]
+					sql = "SELECT name, admin FROM staffs WHERE uow_id=" + known_names[best_match_index]
 					cursor.execute(sql)
 					result = cursor.fetchall()
 
@@ -518,6 +532,10 @@ def face_login():
 					staff_name = result[0][0]
 					session['user'] = staff_name
 
+					if(result[0][1]):
+						session['admin'] = True
+					else:
+						session['admin'] = False
 					return 'success'
 				else:
 					return 'fail'
