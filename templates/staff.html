@@ -29,13 +29,7 @@
           <a href="#" class="img logo rounded-circle mb-5" style="background-image: url(/static/img/foss.jpg);"></a>
           <ul class="list-unstyled components mb-5">
             <li>
-                <a href="#" id="view_room">View Rooms</a>
-            </li>
-            <li>
-                <a href="#" id="add_room">Add Rooms</a>
-            </li>
-            <li>
-                <a href="#" id="add_promo">Add Promo-code</a>
+                <a href="#" id="view_room">View/Edit Rooms</a>
             </li>
             <!--So if a staff is an admin-->
             <!--He/She has the basic functions of a staff-->
@@ -47,6 +41,12 @@
                 </li>
               {%endif%}
             {%endblock%}
+            <li>
+                <a href="#" id="add_room">Add Rooms</a>
+            </li>
+            <li>
+                <a href="#" id="add_promo">Add Promo-code</a>
+            </li>
             <li>
                 <a href="/logout">Logout</a>
             </li>
@@ -126,7 +126,8 @@
 
                 </div>
             </div>
-    <!-- The Modal -->
+
+          <!-- The Modal -->
           <div id="myModal2" class="modal">
             <!-- Modal content -->
             <div class="modal-content2">
@@ -263,6 +264,76 @@
                   <table>
                     <tr>
                       <td><button id = 'add_room_btn' class='btn btn-primary' disabled="">Add Room</button></td>
+                    </tr>
+                  </table>
+                </div>
+            </div>
+          </div>
+
+          <!-- The Modal -->
+          <div id="myModal1" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content1">
+                <span class="close" id = 'close-modal1'>&times;</span>
+                <span id = "modal-sub-info" style='color:green;font-weight: bolder;'>Room <span id="room_id_"></span></span>
+                <div class="booking-form">
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <span class="form-label">Available from</span>
+                        <input class="form-control" type="date" required id = 'avail_from__' name = 'avail_from_'>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <span class="form-label">Available to</span>
+                        <input class="form-control" type="date" required id = 'avail_to__' name = 'avail_to_'>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <span class="form-label">Rate</span>
+                        <input class="form-control" type="text" required id = 'rate__' name = 'rate__' placeholder="Per day rate in SGD">
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <span class="form-label">Capacity</span>
+                        <input class="form-control" type="text" required id = 'capacity__' name = 'capacity__' placeholder="Capacity">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <span class="form-label">Campus</span>
+                        <select id = 'campus__' class='form-control'>
+                          <option>Singapore Institute of Management</option>
+                          <option>UOW Wollongong Campus</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <span class="form-label">Occupied</span>
+                        <select id='occupied__' class='form-control'>
+                          <option>Yes</option>
+                          <option>No</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <span class="form-label">Description</span>
+                    <input class="form-control" type="text" placeholder="Add Description" id = 'description__' name = 'description_'>
+                  </div>
+                  <table>
+                    <tr>
+                      <td><button id = 'approve_btn' class='btn btn-primary'>Approve</button></td>
+                      <td><button id = 'disapprove_btn' class='btn btn-primary' disabled="">Disapprove</button></td>
                     </tr>
                   </table>
                 </div>

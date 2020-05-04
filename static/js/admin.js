@@ -1,4 +1,8 @@
 $(document).ready(function(){
+  $("#close-modal1").click(function(){
+    $("#myModal1").fadeOut("fast")
+  })
+
   var view_status = function(){
     // just make a simple ajax request to server
     var months = {
@@ -62,6 +66,7 @@ $(document).ready(function(){
             .attr("campus", objects[i].campus)
             .attr("occupied", objects[i].occupied)
             .attr("description", objects[i].description)
+            .attr("approved", objects[i].approved)
             .attr("id", "li_" + i)
             .css('listStyleType', 'none')
             .css('margin', '20px')
@@ -73,19 +78,13 @@ $(document).ready(function(){
               $(this).css("opacity", 0.8)
               $(this).css("cursor", "pointer")
 
-              if(objects[i].approved == 1)
-                $(this).css("border", "2px outset green")
-              else
-                $(this).css("border", "2px outset red")
+              $(this).css("border-width", "2px")
             }, function(){ // hover out
               $(this).css("opacity", 1.0)
-              if(objects[i].approved == 1)
-                $(this).css("border", "1px outset green")
-              else
-                $(this).css("border", "1px outset red")
+              $(this).css("border-width", "1px")
             })
             .click(function(){
-              $("#room_id").html($(this).attr("room_id"))
+              $("#room_id_").html($(this).attr("room_id"))
               var room_id = $(this).attr("room_id")
 
               // may be bulky but believe me
@@ -104,6 +103,7 @@ $(document).ready(function(){
                   // upon receiving the response the information about
                   // the room is present
                   obj = JSON.parse(response)
+                  console.log(response)
 
                   var avail_from = new Date(obj.avail_from)
                   var avail_to = new Date(obj.avail_to)
@@ -111,26 +111,29 @@ $(document).ready(function(){
                   var avail_from_str = avail_from.getFullYear() + "-" + pad(avail_from.getMonth()+1,2) + "-" + pad(avail_from.getDate(),2)
                   var avail_to_str = avail_to.getFullYear() + "-" + pad(avail_to.getMonth() + 1, 2) + "-" + pad(avail_to.getDate(),2)
 
-                  $("#avail_from").val(avail_from_str)
-                  $("#avail_to").val(avail_to_str)
+                  // we can do it like this :
+                  // 1. If the room is already approved -> then we disable editing
+                  // 2. 
+                  $("#avail_from__").val(avail_from_str)
+                  $("#avail_to__").val(avail_to_str)
 
-                  $("#rate").val(obj.rate)
-                  $("#capacity").val(obj.capacity)
-                  $("#description").val(obj.description)
+                  $("#rate__").val(obj.rate)
+                  $("#capacity__").val(obj.capacity)
+                  $("#description__").val(obj.description)
 
                   if(obj.campus == "UOW Wollongong Campus"){
-                    $("#campus").val("UOW Wollongong Campus")
+                    $("#campus__").val("UOW Wollongong Campus")
                   }else{
-                    $("#campus").val("Singapore Institute of Management")
+                    $("#campus__").val("Singapore Institute of Management")
                   }
 
                   if(obj.occupied == 1){
-                    $("#occupied").val("Yes")
+                    $("#occupied__").val("Yes")
                   }else{
-                    $("#occupied").val("No")
+                    $("#occupied__").val("No")
                   }
 
-                  $("#myModal2").fadeIn("fast")
+                  $("#myModal1").fadeIn("fast")
                 }
               })
 

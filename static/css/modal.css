@@ -14,7 +14,7 @@
 }
 
 /* Modal Content */
-.modal-content, .modal-content2, .modal-content3, .modal-content4 {
+.modal-content, .modal-content2, .modal-content3, .modal-content4, .modal-content1 {
   background-color:  #EAEDED;
   margin: auto;
   padding: 20px;
@@ -70,6 +70,10 @@
 
 .modal-content4 {
   width : 50%;
+}
+
+.modal-content1 {
+  width : 50%
 }
 
 #booking-info {
