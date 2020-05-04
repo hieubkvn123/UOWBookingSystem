@@ -101,7 +101,7 @@
             <div class="modal-content4">
                 <span class="close" id = 'close-modal4'>&times;</span>
                 <span id = "modal-sub-info" style='color:green;font-weight: bolder;'>Add promotion code</span>
-                <div class="booking-form">
+                <div class='booking-form'>
                   <div class="form-group">
                     <span class="form-label">Promo Code</span>
                     <input class="form-control" type="text" placeholder="Add Promo code" id = 'promo_code' name = 'promo_code'>
@@ -276,7 +276,7 @@
             <div class="modal-content1">
                 <span class="close" id = 'close-modal1'>&times;</span>
                 <span id = "modal-sub-info" style='color:green;font-weight: bolder;'>Room <span id="room_id_"></span></span>
-                <div class="booking-form">
+                <div class="booking-form" id="edit-status-form" >
                   <div class="row">
                     <div class="col-sm-6">
                       <div class="form-group">
@@ -332,8 +332,9 @@
                   </div>
                   <table>
                     <tr>
-                      <td><button id = 'approve_btn' class='btn btn-primary'>Approve</button></td>
-                      <td><button id = 'disapprove_btn' class='btn btn-primary' disabled="">Disapprove</button></td>
+                      <p id='footer-text' style='color:green;font-weight:bolder'></p>
+                      <td><button id = 'approve_btn' class='btn btn-primary' style="background:green">Approve</button></td>
+                      <td><button id = 'disapprove_btn' class='btn btn-primary' style="background:red">Disapprove</button></td>
                     </tr>
                   </table>
                 </div>

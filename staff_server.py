@@ -257,7 +257,8 @@ def view_room_by_id():
 		"description" : result[5],
 		"capacity" : str(result[6]),
 		"campus" : result[7],
-		"occupied" : str(result[8])
+		"occupied" : str(result[8]),
+		"approved" : str(result[9])
 	}
 
 	obj_str = json.dumps(obj)
@@ -615,6 +616,32 @@ def face_login():
 
 	else:
 		return 'none'
+
+@app.route("/approve_room", methods = ['POST'])
+def approve_room():
+	if request.method == 'POST' :
+		room_id = request.form['room_id']
+
+		mydb = mysql.connector.connect(
+			host = DB_CONFIG['host'],
+			user = DB_CONFIG['user'],
+			password = DB_CONFIG['password'],
+			database = DB_CONFIG['database'],
+			auth_plugin = 'mysql_native_password'
+		)
+
+		cursor = mydb.cursor()
+
+		sql = "UPDATE room_details SET approved = 1 WHERE room_id=" + str(room_id)
+		cursor.execute(sql)
+
+		mydb.commit()
+		mydb.close()
+
+		if(cursor.rowcount >= 1):
+			return "success"
+		else:
+			return "failed"
 
 if(__name__ == "__main__"):
 	# debug mode

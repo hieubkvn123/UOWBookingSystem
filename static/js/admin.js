@@ -51,7 +51,7 @@ $(document).ready(function(){
           // convert checkin and checkout date to yyyy-mm-dd
           console.log("Room number " + objects[i].room_id + " occupied : " + objects[i].occupied)
 
-          var color = "red"
+          var color = "yellow"
           var tooltipContent = "Pending Approval"
           if(objects[i].approved == 1)
             color = "green"
@@ -114,7 +114,7 @@ $(document).ready(function(){
                   // we can do it like this :
                   // 1. If the room is already approved -> then we disable editing
                   // 2. If the room has not been approved -> allow the admin to edit room before approval
-                  // 1. Approved -> Allow disapproval  
+                  // 1. Approved -> Allow disapproval
                   // 2. Pending -> Approved or Disapprove
                   $("#avail_from__").val(avail_from_str)
                   $("#avail_to__").val(avail_to_str)
@@ -133,6 +133,25 @@ $(document).ready(function(){
                     $("#occupied__").val("Yes")
                   }else{
                     $("#occupied__").val("No")
+                  }
+
+                  // if the list item with this room id has status approved
+                  if($("li[room_id=" + $("#room_id_").html() + "]").attr("approved") == 1){
+                    // disable editing
+                    // admin can only choose either to disapprove or not
+                    $("#approve_btn").hide()
+                    $("#disapprove_btn").hide()
+                    $("#footer-text").html("(This room has been approved by administrators)")
+                    $("#edit-status-form input").attr("disabled", true)
+                    $("#edit-status-form select").attr("disabled", true)
+                  }else{ // if room is not yet approved
+                    // still enable editing
+                    // admin can edit before approve
+                    $("#approve_btn").show()
+                    $("#disapprove_btn").show()
+                    $("#footer-text").html('')
+                    $("#edit-status-form input").attr("disabled", false)
+                    $("#edit-status-form select").attr("disabled", false)
                   }
 
                   $("#myModal1").fadeIn("fast")
@@ -180,5 +199,39 @@ $(document).ready(function(){
 
   $("#view_room_status").click(function(){
     view_status()
+  })
+
+  // when admin disapprove a room
+  // just modify its info in the DATABASE
+  // then reload the view
+  $("#approve_btn").click(function(){
+    // first, get the room id
+    var room_id = $("#room_id_").html()
+    var formData = new FormData()
+
+    formData.append('room_id', room_id)
+
+    // wait, we forget something.
+    // we need to send all of the info to the server as well
+    // in case the admin changed something
+
+    $.ajax({
+      url : "/approve_room",
+      type : "POST",
+      async : true,
+      data : formData,
+      processData : false,
+      contentType : false,
+      success : function(response){
+        if(response == "success"){
+          $("#myModal1").slideUp("fast")
+          alert("Room " + room_id + " has been approved and will be publicly shown to users ... ")
+          view_status()
+        }else{
+          $("#myModal1").slideUp("fast")
+          alert("There is some thing wrong happened ... ")
+        }
+      }
+    })
   })
 })
