@@ -307,6 +307,10 @@ $(document).ready(function(){
                 }, function(){
                   $(this).css("opacity", 1.0)
                 })
+                .click(function(e){
+                  $("#myModal5").fadeIn("fast")
+                  e.stopPropagation()
+                })
                 .css("width", "100%")
                 .css("padding", "8px")
                 .appendTo("#menu_list_" + i)
