@@ -454,9 +454,14 @@ $(document).ready(function(){
 
         var tick_labels = []
         var durations = []
+        var maxValue = 0
         for(var i = 0; i < objects.length; i++){
           tick_labels.push(objects[i].checkin)
           durations.push(objects[i].duration)
+
+          if(maxValue < objects[i].duration){
+            maxValue = objects[i].duration
+          }
         }
 
         /////////////--The Plot (Write to note after)--//////////////////////////////
@@ -515,7 +520,8 @@ $(document).ready(function(){
                 ticks: {
                   maxRotation: 90,
                   minRotation: 80,
-                  beginAtZero : true
+                  beginAtZero : true,
+                  max : 15
                 }
               }],
               yAxes: [{
@@ -544,9 +550,15 @@ $(document).ready(function(){
 
         var tick_labels = []
         var durations = []
+        var maxValue = 0
+
         for(var i = 0; i < objects.length; i++){
           tick_labels.push(objects[i].checkin)
           durations.push(objects[i].duration)
+
+          if(maxValue < objects[i].duration){
+            maxValue = objects[i].duration
+          }
         }
 
         var ctx = document.getElementById("bar-chart")
@@ -604,7 +616,8 @@ $(document).ready(function(){
                 ticks: {
                   maxRotation: 90,
                   minRotation: 80,
-                  beginAtZero : true
+                  beginAtZero : true,
+                  max : 15
                 }
               }],
               yAxes: [{
