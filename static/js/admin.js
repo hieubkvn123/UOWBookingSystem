@@ -4,6 +4,9 @@ $(document).ready(function(){
   })
 
   $("#close-modal5").click(function(){
+    $("#bar-chart").slideUp()
+    $("#to_date").val("")
+    $("#from_date").val("")
     $("#myModal5").fadeOut("fast")
   })
   var view_status = function(){
@@ -408,5 +411,213 @@ $(document).ready(function(){
 
   $("#view_room_usage").click(function(){
     $("#myModal5").fadeIn("fast")
+  })
+
+  var plot_usage = function(room_id){
+    // we already have the room id, now we needs the date
+    // in which the room has a checkin or checkout
+    // then we need the duration of these corresponding bookings
+    // to plot on the bar chart
+    var from_date = $("#from_date").val()
+    var to_date = $("#to_date").val()
+
+    var formData = new FormData()
+    formData.append("room_id", room_id)
+    formData.append("from_date", from_date)
+    formData.append("to_date", to_date)
+
+    // New feature of Ajax & JQuery -> write to note later
+    return new Promise(function(resolve, reject){
+      $.ajax({
+        url : '/plot_bar',
+        type : 'POST',
+        async : true,
+        data : formData,
+        processData : false,
+        contentType : false,
+        success : function(data){
+          resolve(data)
+        },
+        error : function(data){
+          reject(data)
+        }
+      })
+    })
+  }
+
+  var myChart // for further references
+  $("#from_date").change(function(){
+    var room_id = $("#_room_id_").html()
+    if($("#from_date").val() != "" && $("#to_date").val() != ""){
+      plot_usage(room_id).then(function(data){
+        var objects = JSON.parse(data)
+
+        var tick_labels = []
+        var durations = []
+        for(var i = 0; i < objects.length; i++){
+          tick_labels.push(objects[i].checkin)
+          durations.push(objects[i].duration)
+        }
+
+        /////////////--The Plot (Write to note after)--//////////////////////////////
+        var ctx = document.getElementById("bar-chart")
+        var context = ctx.getContext('2d')
+        //clear the canvas first
+        context.clearRect(0,0,ctx.width, ctx.height)
+
+        if(myChart != null){
+          myChart.destroy()
+        }
+
+        console.log("Creating chart")
+        myChart = new Chart(ctx, {
+          type: 'horizontalBar',
+          data: {
+            labels: tick_labels,
+            datasets: [{
+              label : 'Duration of booking',
+              data: durations,
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              xAxes: [{
+                ticks: {
+                  maxRotation: 90,
+                  minRotation: 80,
+                  beginAtZero : true
+                }
+              }],
+              yAxes: [{
+                ticks: {
+                  beginAtZero: true
+                }
+              }]
+            }
+          }
+        });
+
+        $("#bar-chart").slideDown()
+
+      })
+    }
+  })
+
+  $("#to_date").change(function(){
+    var room_id = $("#_room_id_").html()
+    if($("#from_date").val() != "" && $("#to_date").val() != ""){
+      // $("#footer-text-modal5").html("Ahihi")
+      console.log(room_id)
+      plot_usage(room_id).then(function(data){
+        console.log(data)
+        var objects = JSON.parse(data)
+
+        var tick_labels = []
+        var durations = []
+        for(var i = 0; i < objects.length; i++){
+          tick_labels.push(objects[i].checkin)
+          durations.push(objects[i].duration)
+        }
+
+        var ctx = document.getElementById("bar-chart")
+        var context = ctx.getContext('2d')
+        //clear the canvas first
+        context.clearRect(0,0,ctx.width, ctx.height)
+        console.log("Creating chart")
+
+        if(myChart != null){
+          myChart.destroy()
+        }
+
+        myChart = new Chart(ctx, {
+          type: 'horizontalBar',
+          data: {
+            labels: tick_labels,
+            datasets: [{
+              label : 'Duration of booking',
+              data: durations,
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              xAxes: [{
+                ticks: {
+                  maxRotation: 90,
+                  minRotation: 80,
+                  beginAtZero : true
+                }
+              }],
+              yAxes: [{
+                ticks: {
+                  beginAtZero: true
+                }
+              }]
+            }
+          }
+        });
+
+        $("#bar-chart").slideDown()
+      })
+    }
   })
 })

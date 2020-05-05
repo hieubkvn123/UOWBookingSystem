@@ -11,6 +11,7 @@ import os
 import cv2
 import json
 import hashlib
+import datetime
 import numpy as np
 import face_recognition
 import time
@@ -681,6 +682,48 @@ def approve_only():
 			return 'success'
 		else:
 			return 'fail'
+
+@app.route("/plot_bar", methods = ['POST'])
+def plot_bar():
+	if request.method == 'POST':
+		room_id = request.form['room_id']
+		from_date = request.form['from_date']
+		to_date = request.form['to_date']
+
+		mydb = mysql.connector.connect(
+			host = DB_CONFIG['host'],
+			user = DB_CONFIG['user'],
+			password = DB_CONFIG['password'],
+			database = DB_CONFIG['database'],
+			auth_plugin = 'mysql_native_password'
+		)
+
+		cursor = mydb.cursor()
+
+		sql = "SELECT * FROM bookings WHERE room_id=" + str(room_id)
+		sql += " AND (checkin BETWEEN '" + str(from_date) + "' AND '" + str(to_date) + "'"
+		sql += " OR checkout BETWEEN '" + str(from_date) + "' AND '" + str(to_date) + "')"
+
+		cursor.execute(sql)
+		results = cursor.fetchall()
+		mydb.close()
+
+		# now from results array, get checkin date and duration
+		objects = []
+		for result in results:
+			# checkin : index 3
+			# checkout : index 4
+			checkin = result[3]
+			checkout = result[4]
+
+			diff = checkout - checkin
+
+			duration = diff.days
+
+			obj = {'checkin' : str(checkin), 'duration': str(duration)}
+			objects.append(obj)
+
+		return json.dumps(objects)
 
 if(__name__ == "__main__"):
 	# debug mode
