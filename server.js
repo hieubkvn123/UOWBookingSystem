@@ -53,7 +53,7 @@ app.post('/book', function(req, res){
 		var campus = fields.campus
 
 		// we need to find room with avail_from before check in
-		var condition0 = " occupied <> 1"
+		var condition0 = " ( occupied <> 1 OR room_id IN ( SELECT room_id FROM bookings WHERE checkin NOT BETWEEN '" + fields.check_in + "' AND '" + fields.check_out + "' OR checkout NOT BETWEEN '"  + fields.check_in + "' AND '" + fields.check_out + "' ))"
 		var condition1 = " avail_from < '" + check_in + "'"
 		var condition2 = " avail_to > '" + check_out + "'"
 		var condition3 = " capacity >= " + num_people + ""

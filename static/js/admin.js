@@ -308,6 +308,7 @@ $(document).ready(function(){
                   $(this).css("opacity", 1.0)
                 })
                 .click(function(e){
+                  $("#_room_id_").html($(this).attr("room_id"))
                   $("#myModal5").fadeIn("fast")
                   e.stopPropagation()
                 })
