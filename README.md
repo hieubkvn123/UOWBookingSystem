@@ -7,6 +7,7 @@ This project is a part of module CSIT 214 - IT Project Management at the Univers
 	--> Staff portal : Flask (Python), JQuery
 	--> Student portal : ExpressJS, NodeJS and JQuery
 	--> Database : MySQL
+	--> Data visualization tool : Chart.js
 	--> CSS Framework : Bootstrap and Bulma CSS
 	--> Template Engine : EJS (with ExpressJS)
 
