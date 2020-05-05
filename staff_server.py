@@ -656,6 +656,32 @@ def approve_room():
 		else:
 			return "failed"
 
+@app.route("/approve_only", methods = ['POST'])
+def approve_only():
+	if request.method == 'POST':
+		room_id = request.form['room_id']
+
+		mydb = mysql.connector.connect(
+			host = DB_CONFIG['host'],
+			user = DB_CONFIG['user'],
+			password = DB_CONFIG['password'],
+			database = DB_CONFIG['database'],
+			auth_plugin = 'mysql_native_password'
+		)
+
+		cursor = mydb.cursor()
+
+		sql = "UPDATE room_details SET approved = 1 WHERE room_id=" + str(room_id)
+
+		cursor.execute(sql)
+		mydb.commit()
+		mydb.close()
+
+		if(cursor.rowcount >= 1):
+			return 'success'
+		else:
+			return 'fail'
+
 if(__name__ == "__main__"):
 	# debug mode
 	app.run(debug = True, port = PORT)

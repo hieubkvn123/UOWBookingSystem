@@ -198,8 +198,9 @@ $(document).ready(function(){
             .css("margin-right", "8px")
             .css("margin-top", "8px")
             .attr("id", "dropdown_button_" + i)
+            .addClass("toggleBtn")
             .click(function(e){
-              $(this).children().slideToggle("fast")
+              $(this).children("ul").slideToggle("fast")
               e.stopPropagation()
             })
             .hover(function(){
@@ -216,23 +217,101 @@ $(document).ready(function(){
               .css("padding", "0")
               .css('list-style-type', 'none')
 
-            $("<li>")
-              .html("Approve")
-              .css("background", "green")
-              .css('width', "100%")
-              .appendTo("#menu_list_" + i)
-              .addClass("menu_item")
-            $("<li>")
-              .html("Disapprove")
-              .css("background", "red")
-              .css("width", "100%")
-              .appendTo("#menu_list_" + i)
-              .addClass("menu_item")
-            $("<li>")
-              .html("View Usage")
-              .css("width", "100%")
-              .appendTo("#menu_list_" + i)
-              .addClass("menu_item")
+            if($("#li_" + i).attr("approved") == 0){
+              $("<li>")
+                .attr("room_id", $("#li_" + i).attr("room_id"))
+                .html("Disapprove")
+                .css("background", "red")
+                .css("width", "100%")
+                .css("padding", "8px")
+                .hover(function(){
+                  $(this).css("cursor", "pointer")
+                  $(this).css("opacity", 0.8)
+                }, function(){
+                  $(this).css("opacity", 1.0)
+                })
+                .click(function(e){
+                  var room_id = $(this).attr("room_id")
+
+                  var formData = new FormData()
+                  formData.append("room_id", room_id)
+
+                  // just send the room id to server
+                  // for deletion
+                  $.ajax({
+                    url : '/delete_room',
+                    type : 'POST',
+                    async : true,
+                    data : formData,
+                    processData : false,
+                    contentType : false,
+                    success : function(response){
+                      if(response == 'success'){
+                        alert("Room " + room_id + " is disapproved and deleted ... ")
+                        view_status()
+                      }else{
+                        alert("There is something wrong with deleting this room ... ")
+                      }
+                    }
+                  })
+                })
+                .appendTo("#menu_list_" + i)
+                .addClass("menu_item")
+
+                $("<li>")
+                  .attr("room_id", $("#li_" + i).attr("room_id"))
+                  .html("Approve")
+                  .hover(function(){
+                    $(this).css("cursor", "pointer")
+                    $(this).css("opacity", 0.8)
+                    }, function(){
+                      $(this).css("opacity", 1.0)
+                    })
+                  .click(function(e){
+                      var room_id = $(this).attr("room_id")
+
+                      var formData = new FormData()
+                      formData.append("room_id", room_id)
+
+                      $.ajax({
+                        url : '/approve_only',
+                        type : 'POST',
+                        async : true,
+                        data : formData,
+                        processData : false,
+                        contentType : false,
+                        success : function(response){
+                          if(response == 'success'){
+                            alert("Room " + room_id + " has been approved and will be shown to users ... ")
+                            view_status()
+                          }else{
+                            alert("There is something wrong with approving this room ... ")
+                          }
+                        }
+                      })
+
+                      e.stopPropagation()
+                  })
+                  .css("background", "green")
+                  .css('width', "100%")
+                  .css("padding", "8px")
+                  .appendTo("#menu_list_" + i)
+                  .addClass("menu_item")
+            }else{
+              $("<li>")
+                .attr("room_id", $("#li_" + i).attr("room_id"))
+                .html("View Usage")
+                .hover(function(){
+                  $(this).css("cursor", "pointer")
+                  $(this).css("opacity", 0.8)
+                }, function(){
+                  $(this).css("opacity", 1.0)
+                })
+                .css("width", "100%")
+                .css("padding", "8px")
+                .appendTo("#menu_list_" + i)
+                .addClass("menu_item")
+            }
 
           $("#li_" + i)
             .hide()
