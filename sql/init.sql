@@ -21,6 +21,29 @@ CREATE TABLE IF NOT EXISTS room_details(
 	PRIMARY KEY (room_id)
 );
 
+# types of users and users credentials details :
+# 1. supper user :
+# 	--> Name : Hieu Handsome
+# 	--> uow_id : 6216602
+#		--> password : HieuDepTry
+#
+# 2. staff :
+# 	--> Name : Justin Xin
+# 	--> uow_id : 6216603
+# 	--> password : justinxin
+#
+#	3. student :
+#
+#	a. Chi Wei Jin
+# 	--> name : Chi Wei Jin
+# 	--> uow_id : 6216605
+# 	--> password : wei
+#
+# b. Zeng Kailin
+# 	--> name : Zeng Kailin
+# 	--> uow_id : 6216604
+#		--> password : zeng
+
 # Some demo data
 INSERT INTO room_details VALUES (
 	DEFAULT,'2020-04-01', '2020-04-20', '/static/img/rooms/img1.jpg', 19.80, 'Beautiful',3,'Singapore Institute of Management', 0, 1
