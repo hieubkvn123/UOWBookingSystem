@@ -184,7 +184,8 @@ app.post("/process_form", function(req, res){
 						}
 						res.send("Good")
 					}else{
-						var sql = "SELECT * FROM promo_code WHERE code='" + fields.promo_code + "'"
+						// perform a case-sensitive select overhere
+						var sql = "SELECT *  FROM promo_code WHERE BINARY code='" + fields.promo_code + "'"
 						connection.query(sql, function(err, results){
 							if(results.length > 0){ // the promo_code exists
 								// then initialize discount
