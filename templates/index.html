@@ -39,17 +39,28 @@
 				</div>
 				<div class="col-md-4 col-md-pull-7">
 					<div class="booking-form">
-							<div class="form-group">
-								<span class="form-label">Your name</span>
-								<input class="form-control" type="text" placeholder="Enter name as in your UOW ID" id = 'name' name = 'name'>
+							<!-- Name and password-->
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<span class="form-label">Your Name</span>
+										<input class="form-control" type="text" placeholder="Enter name as in your UOW ID" id = 'name' name = 'name'>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<span class="form-label">UOW ID</span>
+										<input class="form-control" type="text" placeholder="UOW ID" id = 'uow_id' name = 'uow_id'>
+									</div>
+								</div>
 							</div>
 
 							<!-- UOW ID and promo code-->
 							<div class="row">
 								<div class="col-sm-6">
 									<div class="form-group">
-										<span class="form-label">UOW ID</span>
-										<input class="form-control" type="text" placeholder="UOW ID" id = 'uow_id' name = 'uow_id'>
+										<span class="form-label">Password</span>
+										<input class="form-control" type="password" placeholder="Password" id = 'password' name = 'password'>
 									</div>
 								</div>
 								<div class="col-sm-6">
@@ -148,10 +159,11 @@
 		    <p id = 'modal-p'>Availability based on your input<br>
 		    <span id = "modal-sub-info" style='color:green'>(Please click on the room information to select)</span>
 		    </p>
-		    <form action='/process_form' method = 'POST' id = 'final-booking-form'> 
+		    <form action='/process_form' method = 'POST' id = 'final-booking-form'>
 		    	<ul id="points_list" style='list-style-type: none'>
 		    	</ul>
 		    	<input type = 'text' name = 'name' id = 'name_input' hidden/>
+					<input type = 'password' name = 'password' id = 'password_input' hidden/>
 		    	<input type = 'text' name = 'uow_id' id = 'uow_id_input' hidden/>
 		    	<input type = 'text' name = 'promo_code' id = 'promo_code_input' hidden/>
 		    	<input type = 'date' name = 'check_in' id = 'checkin_input' hidden/>
@@ -181,7 +193,7 @@
 		    	</tr>
 			</table>
 			<ul id = 'booking-info'>
-				
+
 			</ul>
 		    </p>
 		</div>
@@ -236,7 +248,7 @@
 							<input class="form-control" type="time" required id = 'edit_checkout_time' name = 'check-out-time'>
 						</div>
 					</div>
-				</div>				
+				</div>
 			</div>
 			<table>
 				<tr>
@@ -246,5 +258,5 @@
 		</div>
 	</div>
 </div>
-</body> 
+</body>
 </html>

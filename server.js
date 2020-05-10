@@ -6,6 +6,7 @@ const mysql = require('mysql')
 const bodyParser = require('body-parser')
 const db_config = require('./db_config')
 const session = require('express-session')
+const crypto = require('crypto')
 
 const PORT = 8080
 var DB_CONFIG = db_config.DB_CONFIG
@@ -53,7 +54,7 @@ app.post('/book', function(req, res){
 		var campus = fields.campus
 
 		// we need to find room with avail_from before check in
-		var condition0 = " ( occupied <> 1 OR room_id IN ( SELECT room_id FROM bookings WHERE checkin NOT BETWEEN '" + fields.check_in + "' AND '" + fields.check_out + "' OR checkout NOT BETWEEN '"  + fields.check_in + "' AND '" + fields.check_out + "' ))"
+		var condition0 = " ( occupied <> 1 OR room_id IN ( SELECT room_id FROM bookings WHERE checkin NOT BETWEEN '" + fields.check_in + "' AND '" + fields.check_out + "' AND checkout NOT BETWEEN '"  + fields.check_in + "' AND '" + fields.check_out + "' ))"
 		var condition1 = " avail_from < '" + check_in + "'"
 		var condition2 = " avail_to > '" + check_out + "'"
 		var condition3 = " capacity >= " + num_people + ""
@@ -155,52 +156,66 @@ app.post("/process_form", function(req, res){
 		req.session.uow_id = fields.uow_id
 		req.session.num_days = dateDiffInDays(new Date(fields.checkin), new Date(fields.checkout))
 
-		if(fields.promo_code == ""){
-			req.session.discount = 0
-			for(var i = 0; i < id_list.length - 1; i++){
-				obj = {
-					name : fields.name,
-					uow_id : fields.uow_id,
-					checkin : fields.checkin,
-					checkout : fields.checkout,
-					checkin_time : fields.checkin_time,
-					checkout_time : fields.checkout_time,
-					num_people : fields.num_people,
-					category : fields.category,
-					campus : fields.campus
-				}
+		// encode the password to md5
+		var md5_password = crypto.createHash("md5").update(fields.password).digest("hex")
+		// check if this student account is a valid account
+		var sql = "SELECT * FROM students WHERE name = '" + fields.name + "' AND uow_id = " + fields.uow_id + " AND password='" + md5_password + "'";
+		// console.log(sql)
+		connection.query(sql, function(err, results){
+			if(err){ console.log(err) }
+			else{
+				if(results.length > 0){
+					if(fields.promo_code == ""){
+						req.session.discount = 0
+						for(var i = 0; i < id_list.length - 1; i++){
+							obj = {
+								name : fields.name,
+								uow_id : fields.uow_id,
+								checkin : fields.checkin,
+								checkout : fields.checkout,
+								checkin_time : fields.checkin_time,
+								checkout_time : fields.checkout_time,
+								num_people : fields.num_people,
+								category : fields.category,
+								campus : fields.campus
+							}
 
-				insert(id_list[i], obj)
-			}
-			res.send("Good")
-		}else{
-			var sql = "SELECT * FROM promo_code WHERE code='" + fields.promo_code + "'"
-			connection.query(sql, function(err, results){
-				if(results.length > 0){ // the promo_code exists
-					// then initialize discount
-					req.session.discount = results[0].value
-					for(var i = 0; i < id_list.length - 1; i++){
-						obj = {
-							name : fields.name,
-							uow_id : fields.uow_id,
-							checkin : fields.checkin,
-							checkout : fields.checkout,
-							checkin_time : fields.checkin_time,
-							checkout_time : fields.checkout_time,
-							num_people : fields.num_people,
-							category : fields.category,
-							campus : fields.campus
+							insert(id_list[i], obj)
 						}
+						res.send("Good")
+					}else{
+						var sql = "SELECT * FROM promo_code WHERE code='" + fields.promo_code + "'"
+						connection.query(sql, function(err, results){
+							if(results.length > 0){ // the promo_code exists
+								// then initialize discount
+								req.session.discount = results[0].value
+								for(var i = 0; i < id_list.length - 1; i++){
+									obj = {
+										name : fields.name,
+										uow_id : fields.uow_id,
+										checkin : fields.checkin,
+										checkout : fields.checkout,
+										checkin_time : fields.checkin_time,
+										checkout_time : fields.checkout_time,
+										num_people : fields.num_people,
+										category : fields.category,
+										campus : fields.campus
+									}
 
-						insert(id_list[i], obj)
+									insert(id_list[i], obj)
+								}
+
+								res.send("Good")
+							}else{ // the promocode does not exists
+								res.send("Invalid")
+							}
+						})
 					}
-
-					res.send("Good")
-				}else{ // the promocode does not exists
-					res.send("Invalid")
+				}else{
+					res.send("Account invalid")
 				}
-			})
-		}
+			}
+		})
 	})
 })
 

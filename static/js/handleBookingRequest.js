@@ -11,7 +11,7 @@ $(document).ready(function(){
 	closeModal2.onclick = function(){
 		document.getElementById('myModal2').style.display = 'none'
 	}
-	
+
 	closeModal3.onclick = function(){
 		document.getElementById('myModal3').style.display = 'none'
 	}
@@ -65,15 +65,15 @@ $(document).ready(function(){
 					for(var i = 0; i < objects.length; i++){
 						// for each object we have booking id, checkin, checkout and room id and campus
 						var booking_id = objects[i].booking_id
-						var checkin = objects[i].checkin 
+						var checkin = objects[i].checkin
 						var checkin_date = new Date(checkin)
 						var checkin_str = checkin_date.getFullYear() + "/" + pad(checkin_date.getMonth()+1,2) + "/" + checkin_date.getDate()
 
-						var checkout = objects[i].checkout 
+						var checkout = objects[i].checkout
 						var checkout_date = new Date(checkout)
 						var checkout_str = checkout_date.getFullYear() + "/" + pad(checkout_date.getMonth()+1,2) + "/" + checkout_date.getDate()
-						var room_id = objects[i].room_id 
-						var campus = objects[i].campus 
+						var room_id = objects[i].room_id
+						var campus = objects[i].campus
 
 						var div_id = 'div_id_' + booking_id
 						var li_id = 'li_id_' + booking_id
@@ -126,7 +126,7 @@ $(document).ready(function(){
 							.css("marginTop", "0px")
 							.appendTo("#table_" + div_id)
 							.wrap("<td>")
-							
+
 						$("#x_" + div_id).click(function(){
 								// need to go back to NodeJS and do :
 								// 1.Delete the row from bookings table
@@ -153,7 +153,7 @@ $(document).ready(function(){
 								// delete the li tag
 								$(this).parents("li").remove()
 						})
-						
+
 						$("#edit_" + div_id).click(function(){
 							// go back to NodeJS and do:
 							// 1. Look for the booking based on the booking id
@@ -179,7 +179,7 @@ $(document).ready(function(){
 									var checkout_date = new Date(booking['checkout'])
 
 									var checkin_str = checkin_date.getFullYear() + "-" + pad(checkin_date.getMonth() + 1,2) + "-" + checkin_date.getDate()
-									var checkout_str = checkout_date.getFullYear() + "-" + pad(checkout_date.getMonth() + 1,2) + "-" + checkout_date.getDate()							
+									var checkout_str = checkout_date.getFullYear() + "-" + pad(checkout_date.getMonth() + 1,2) + "-" + checkout_date.getDate()
 
 									$("#edit_booking_id").val(booking['booking_id'])
 									$("#edit_name").val(booking['name'])
@@ -238,6 +238,7 @@ $(document).ready(function(){
 
 			// get all data from the primary form
 			var name = document.getElementById('name').value
+			var password = document.getElementById('password').value
 			var uow_id = document.getElementById('uow_id').value
 			var promo_code = document.getElementById('promo_code').value
 			var check_in = document.getElementById('check-in-date').value
@@ -269,6 +270,7 @@ $(document).ready(function(){
 				success : function(response){
 					// First, migrate all data from previous form to this form
 					$("#name_input").val(name)
+					$("#password_input").val(password)
 					$("#uow_id_input").val(uow_id)
 					$("#promo_code_input").val(promo_code)
 					$("#checkin_input").val(check_in)
@@ -299,7 +301,7 @@ $(document).ready(function(){
 
 				    		var avail_date = "From " + avail_date_from.getDate() + "/" + (avail_date_from.getMonth()+1) + "/" + avail_date_from.getFullYear()
 				    		avail_date += " To " + avail_date_to.getDate() + "/" + (avail_date_to.getMonth()+1) + "/" + avail_date_to.getFullYear()
-				    		
+
 				    		var html_str = "<span class='info-header'>Availability</span> : " + avail_date + "<br/>"
 				    		html_str += "<span class='info-header'>Per day rate</span> : " + object.rate + " $SGD <br/>"
 				    		html_str += "<span class='info-header'>Capacity</span> : " + object.capacity + " (Pax) <br/>"
@@ -381,6 +383,7 @@ $(document).ready(function(){
 		orderBtn.onclick = function(){
 			var formData = new FormData()
 			var name = document.getElementById('name_input').value
+			var password = document.getElementById('password_input').value
 			var uow_id = document.getElementById('uow_id_input').value
 			var promo_code = document.getElementById('promo_code_input').value
 			var checkin = document.getElementById('checkin_input').value
@@ -393,6 +396,7 @@ $(document).ready(function(){
 			var id_list = document.getElementById('id_list_input').value
 
 			formData.append('name', name)
+			formData.append('password', password)
 			formData.append('uow_id', uow_id)
 			formData.append('promo_code', promo_code)
 			formData.append('checkin', checkin)
@@ -415,6 +419,8 @@ $(document).ready(function(){
 					document.getElementById('myModal').style.display = 'none'
 					if(response == "Invalid"){
 						alert("This promo code is either invalid or is not applicable for you ...")
+					}else if(response == "Account invalid"){
+						alert("This account either does not exists or is invalid ... ")
 					}else{
 						window.location.replace('/payment') // redirects to payment page
 					}

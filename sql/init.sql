@@ -4,6 +4,7 @@ USE UOW_BOOKING_SYS;
 DROP TABLE IF EXISTS bookings;
 DROP TABLE IF EXISTS room_details;
 DROP TABLE IF EXISTS staffs;
+DROP TABLE IF EXISTS students;
 DROP TABLE IF EXISTS promo_code;
 
 CREATE TABLE IF NOT EXISTS room_details(
@@ -73,13 +74,26 @@ CREATE TABLE IF NOT EXISTS staffs (
 );
 
 # insert some demo data
-
 # password is md5 equivalence of 'justinxin'
 INSERT INTO staffs VALUES("Justin Xin", 6216603, "ec5f6c2d6f8238278bab75c2e9c56b86", 0);
 
 # create a new admin account
 # password is md5 equivalence of 'HieuDepTry'
 INSERT INTO staffs VALUES("Hieu Handsome", 6216602, "185d50608d0044c5cdbad284052bf9b4", 1);
+
+# create a table for student accounts
+CREATE TABLE IF NOT EXISTS students (
+	name VARCHAR(30) NOT NULL,
+	uow_id INT(8) NOT NULL,
+	password VARCHAR(100) NOT NULL
+);
+
+# insert some demo data
+# password is md5 equivalence of 'zeng'
+INSERT INTO students VALUES ("Zeng Kailin", 6216604, "e06c96c9ffae0154e7ade9e76f2667af");
+
+# password is md5 equivalence of 'wei'
+INSERT INTO students VALUES ("Chi Wei Jin", 6216605, "d69d8949e163fd84c2a5da50138df308");
 
 # create a table for promo code
 CREATE TABLE IF NOT EXISTS promo_code (
