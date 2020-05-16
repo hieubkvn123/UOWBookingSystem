@@ -97,6 +97,8 @@ def login():
 			return redirect('/user')
 		else:
 			return render_template('error.html')
+	else:
+		return render_template('error.html')
 
 @app.route('/user')
 def user():
