@@ -727,6 +727,43 @@ def plot_bar():
 
 		return json.dumps(objects)
 
+@app.route("/view_promo", methods = ['POST'])
+def view_promo():
+	secret_key = 'HieuDepTry'
+	if request.method == 'POST':
+		if(hashlib.md5(secret_key.encode()).hexdigest() == request.form['secret_key']):
+			# now the request is authenticated
+			# query the database
+			# another time, resource efficiency
+			mydb = mysql.connector.connect(
+				host = DB_CONFIG['host'],
+				user = DB_CONFIG['user'],
+				password = DB_CONFIG['password'],
+				database = DB_CONFIG['database'],
+				auth_plugin = 'mysql_native_password'
+			)
+
+			cursor = mydb.cursor()
+
+			sql = "SELECT * FROM promo_code"
+			cursor.execute(sql)
+			results = cursor.fetchall()
+			mydb.close()
+
+
+			objects = []
+			for result in results:
+				code = result[0]
+				value = result[1]
+				applicable_for = result[2]
+
+				obj = {'code':code, 'value':value, 'applicable_for':applicable_for}
+				objects.append(obj)
+
+			return json.dumps(objects)
+		else:
+			return 'Authentication failed'
+
 if(__name__ == "__main__"):
 	# debug mode
 	app.run(debug = True, port = PORT)

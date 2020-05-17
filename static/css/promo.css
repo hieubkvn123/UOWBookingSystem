@@ -1,0 +1,43 @@
+#promo-code-table th, td {
+	padding : 8px;
+	border-bottom : 1px solid #00002250;
+}
+
+#promo-code-table th {
+	background : #0000FA50;
+	color : white;
+	font-weight : normal;
+	text-align : left
+}
+
+#promo-code-table {
+	width : 100%;
+	border-collapse : collapse;
+}
+
+#table-container {
+	width : 100%;
+	border : black solid 1px;
+	border-radius : 5px;
+	box-shadow : 5px 5px #00002250;
+	display : none;
+}
+
+#promo-code-table-header {
+	font-family : 'monospace';
+	font-size : 20px;
+}
+
+#promo-code-table-header:hover {
+	background : #0000FA80;
+	cursor : pointer;
+}
+
+.promo-code-table-content {
+	font-family : 'monospace'
+}
+
+.promo-code-table-content:hover {
+	background : #FA000050;
+	cursor : pointer;
+}

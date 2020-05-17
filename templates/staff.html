@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/static/css/staff.css">
     <link rel="stylesheet" href="/static/css/staff_.css">
+    <link rel="stylesheet" href="/static/css/promo.css">
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/modal.css">
 
@@ -50,6 +51,9 @@
             </li>
             <li>
                 <a href="#" id="add_promo">Add Promo-code</a>
+            </li>
+            <li>
+                <a href="#" id="view_promo">View Promo-code</a>
             </li>
             <li>
                 <a href="/logout">Logout</a>
@@ -95,8 +99,27 @@
         <h2 class="mb-4" id='content-header'>Welcome {{name}}</h2>
         <div id='content_'>
           <p>Welcome back to UOW Booking System Staff Portal</p>
-        </div>
 
+          <div id='table-container'>
+            <table id='promo-code-table' border=0>
+              <tr id='promo-code-table-header'>
+                <th>Promo Code</th>
+                <th>Applicable for</th>
+                <th>Value of discount</th>
+              </tr>
+              <tr class='promo-code-table-content'>
+                <td>HieuDepTry</td>
+                <td>Student</td>
+                <td>50%</td>
+              </tr>
+              <tr class='promo-code-table-content'>
+                <td>HieuDepTry</td>
+                <td>Student</td>
+                <td>50%</td>
+              </tr>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
     <!-- The Modal -->

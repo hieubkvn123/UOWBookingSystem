@@ -567,4 +567,76 @@ $(document).ready(function(){
  			search_room($(this).val())
 
  	})
+
+ 	$("#view_promo").click(function(){	
+ 		$("#content_").empty()
+
+ 		var promo_table = $("<div>")
+ 			.attr("id", "table-container")
+ 			.appendTo("#content_")
+
+ 		$("<table>")
+ 			.attr("id", "promo-code-table")
+ 			.appendTo("#table-container")
+
+ 		$("<tr>")
+ 			.attr("id", "promo-code-table-header")
+ 			.appendTo("#promo-code-table")
+
+ 		$("<th>")
+ 			.html("Promo Code")
+ 			.appendTo("#promo-code-table-header")
+
+ 		$("<th>")
+ 			.html("Applicable For")
+ 			.appendTo("#promo-code-table-header")
+
+ 		$("<th>")
+ 			.html("Discount Value")
+ 			.appendTo("#promo-code-table-header")
+
+
+ 		// Now query the server to see which promo codes are there
+ 		// response is in the form of JSON
+ 		var formData = new FormData()
+
+ 		// always have some kind of secret keys to sensitive data
+ 		formData.append("secret_key", "185d50608d0044c5cdbad284052bf9b4")
+ 		$.ajax({ // good old ajax
+ 			url : '/view_promo',
+ 			type : 'POST',
+ 			data : formData,
+ 			async : true,
+ 			processData : false,
+ 			contentType : false,
+ 			success : function(response){
+ 				if(response == 'Authentication failed'){
+ 					alert("Authentication failed ... ")
+ 				}else{
+ 					// create <tr> tags and append them to promo-code-table
+ 					var objects = JSON.parse(response)
+ 					for(var i = 0; i < objects.length; i++){
+ 						$("<tr>")
+ 							.attr("id", objects[i].code)
+ 							.addClass("promo-code-table-content")
+ 							.appendTo("#promo-code-table")
+
+ 						$("<td>")
+ 							.html(objects[i].code)
+ 							.appendTo("#" + objects[i].code)
+
+ 						$("<td>")
+ 							.html(objects[i].applicable_for)
+ 							.appendTo("#" + objects[i].code)
+
+ 						$("<td>")
+ 							.html(objects[i].value)
+ 							.appendTo("#" + objects[i].code)	
+ 					}
+ 				}
+ 			} 
+ 		})
+
+ 		promo_table.fadeIn("fast")
+ 	})
 })
