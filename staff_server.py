@@ -355,6 +355,12 @@ def add_room():
 	image = request.files['image']
 
 	filename = secure_filename(image.filename)
+
+	# if the file of the room image already exists, change the file 
+	# name first
+	if(os.path.exists(app.config['UPLOAD_FOLDER'] + "/" + filename)):
+		filename = filename.split(".")[0] + str(time.time()) + ".jpg"
+
 	abs_filename = '/static/img/rooms/' + filename
 
 	sql = "INSERT INTO room_details VALUES(DEFAULT, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
