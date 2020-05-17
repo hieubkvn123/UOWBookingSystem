@@ -24,7 +24,9 @@ This project is a part of module CSIT 214 - IT Project Management at the Univers
 
 	--> Payment invoice template : Spark Suite
 		- URL : https://github.com/sparksuite/simple-html-invoice-template
-
+	
+	--> Table designed, inspired by : Colorlib Table templates
+		- URL : https://colorlib.com/etc/tb/Table_Fixed_Header/index.html 
 # Declaration :
 	--> Aside from the pieces of works referenced above, we declare that this assignment is based on our own work
 	--> Including system design, backend programming, database design, ... we are willing to accept any penalty if
