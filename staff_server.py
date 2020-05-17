@@ -764,6 +764,97 @@ def view_promo():
 		else:
 			return 'Authentication failed'
 
+@app.route("/get_promo", methods = ['POST'])
+def get_promo():
+	secret_key = 'HieuDepTry'
+	if request.method == 'POST':
+		if(hashlib.md5(secret_key.encode()).hexdigest() == request.form['secret_key']):
+			mydb = mysql.connector.connect(
+				host = DB_CONFIG['host'],
+				user = DB_CONFIG['user'],
+				password = DB_CONFIG['password'],
+				database = DB_CONFIG['database'],
+				auth_plugin = 'mysql_native_password'
+			)
+
+			cursor = mydb.cursor()
+
+			code = request.form['code']
+			sql = "SELECT * FROM promo_code WHERE code = '" + code + "'"
+			cursor.execute(sql)
+			results = cursor.fetchall()
+			mydb.close()
+
+			# since there is only one result, we send 
+			# a dictionary to the requestor
+			obj = {'code':results[0][0], 'value':results[0][1], 'applicable_for':results[0][2]}
+
+			return json.dumps(obj)
+
+		else:
+			return 'Authentication failed'
+
+@app.route("/edit_promo", methods = ['POST'])
+def edit_promo():
+	secret_key = 'HieuDepTry'
+	if request.method == 'POST':
+		if(hashlib.md5(secret_key.encode()).hexdigest() == request.form['secret_key']):
+			mydb = mysql.connector.connect(
+				host = DB_CONFIG['host'],
+				user = DB_CONFIG['user'],
+				password = DB_CONFIG['password'],
+				database = DB_CONFIG['database'],
+				auth_plugin = 'mysql_native_password'
+			)
+
+			cursor = mydb.cursor()
+
+			code = request.form['code']
+			value = request.form['value']
+			applicable_for = request.form['applicable_for']
+
+			sql = "UPDATE promo_code SET value=" + str(value) + ", applicable_for='" + applicable_for + "'" + " WHERE code='" + code + "'"
+			cursor.execute(sql)
+			mydb.commit()
+			mydb.close()
+
+			if(cursor.rowcount > 0):
+				return 'success'
+			else:
+				return 'fail'
+
+		else:
+			return 'Authentication failed'
+
+@app.route("/delete_promo", methods = ['POST'])
+def delete_promo():
+	secret_key = 'HieuDepTry'
+	if(request.method == 'POST'):
+		if(hashlib.md5(secret_key.encode()).hexdigest() == request.form['secret_key']):
+			mydb = mysql.connector.connect(
+				host = DB_CONFIG['host'],
+				user = DB_CONFIG['user'],
+				password = DB_CONFIG['password'],
+				database = DB_CONFIG['database'],
+				auth_plugin = 'mysql_native_password'
+			)
+
+			cursor = mydb.cursor()
+
+			code = request.form['code']
+			sql = "DELETE FROM promo_code WHERE code='" + str(code) + "'"
+			cursor.execute(sql)
+			mydb.commit()
+			mydb.close()
+
+			if(cursor.rowcount > 0):
+				return 'success'
+			else:
+				return 'fail'
+
+		else:
+			return 'Authentication failed'
+
 if(__name__ == "__main__"):
 	# debug mode
 	app.run(debug = True, port = PORT)

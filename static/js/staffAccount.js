@@ -20,6 +20,12 @@ $(document).ready(function(){
 		$("#myModal4").fadeOut("fast")
 	})
 
+	$("#close-modal6").click(function(){
+		$("#myModal6 input").val('')
+		$("#edit_promo_btn").attr("disabled", true)
+		$("#myModal6").fadeOut("fast")
+	})
+
 	var search_room = function(search_room_id){
 		// just make a simple ajax request to server
 		var months = {
@@ -558,6 +564,8 @@ $(document).ready(function(){
  				else{
  					alert("There is something wrong while adding this code ... ")
  				}
+
+ 				view_promo()
  			}
  		})
  	})
@@ -568,7 +576,7 @@ $(document).ready(function(){
 
  	})
 
- 	$("#view_promo").click(function(){	
+ 	var view_promo = function(){
  		$("#content_").empty()
 
  		var promo_table = $("<div>")
@@ -619,6 +627,40 @@ $(document).ready(function(){
  						$("<tr>")
  							.attr("id", objects[i].code)
  							.addClass("promo-code-table-content")
+ 							.click(function(){
+ 								// now add some code that allow staff to modify the thingy
+ 								// instead of getting the information loaded and ready for use
+ 								// I'm just gonna request another time so that the information
+ 								// is updated in real time
+ 								var code = $(this).attr("id")
+
+ 								// another ajax
+ 								var formData = new FormData()
+
+ 								formData.append("code", code)
+ 								formData.append("secret_key", "185d50608d0044c5cdbad284052bf9b4")
+ 								$.ajax({
+ 									url : "/get_promo",
+ 									type : 'POST',
+ 									data : formData,
+ 									async : true,
+ 									processData : false,
+ 									contentType : false,
+ 									success : function(response){
+ 										if(response == 'Authentication failed'){
+ 											alert("Authentication failed ... ")
+ 										}else{
+ 											var object = JSON.parse(response)
+
+ 											$("#edit_promo_code").val(object.code)
+ 											$("#edit_value").val(object.value)
+ 											$("#edit_applicable_for").val(object.applicable_for)
+
+ 											$("#myModal6").fadeIn("fast")
+ 										}
+ 									}
+ 								})
+ 							})
  							.appendTo("#promo-code-table")
 
  						$("<td>")
@@ -638,5 +680,82 @@ $(document).ready(function(){
  		})
 
  		promo_table.fadeIn("fast")
+ 	}
+
+ 	$("#view_promo").click(function(){	
+ 		view_promo()
+ 	})
+
+ 	$("#edit-promo-form input").on("input", function(){
+ 		if($("#edit_promo_code").val() == '' ||
+ 		   $("#edit_value").val() == '' ||
+ 		   $("#edit_applicable_for").val() == ''){ // if on input and input field empty
+ 			$("#edit_promo_btn").attr("disabled", true)
+ 		}else{
+ 			$("#edit_promo_btn").attr("disabled", false)
+ 		}
+ 	})
+
+ 	$("#edit_promo_btn").click(function(){
+ 		var code = $("#edit_promo_code").val()
+ 		var value = $("#edit_value").val()
+ 		var applicable_for = $("#edit_applicable_for").val()
+
+ 		var formData = new FormData()
+
+ 		formData.append('secret_key', '185d50608d0044c5cdbad284052bf9b4')
+ 		formData.append("code", code)
+ 		formData.append("value", value)
+ 		formData.append("applicable_for", applicable_for)
+
+ 		$.ajax({
+ 			url : '/edit_promo',
+ 			type : 'POST',
+ 			async : true,
+ 			data : formData,
+ 			processData : false,
+ 			contentType : false,
+ 			success : function(response){
+ 				if(response == 'Authentication failed'){
+ 					alert('Authentication failed ... ')
+ 				}else if(response == 'fail'){
+ 					alert("There is something wrong while editing promo code ... ")
+ 				}else if(response == 'success'){
+ 					alert("Promo code has been updated successfully ... ")
+ 				}
+
+ 				view_promo()
+ 				$("#myModal6").fadeOut("fast")
+ 			}	
+ 		})
+ 	})
+
+ 	$("#delete_promo_btn").click(function(){
+ 		var code = $("#edit_promo_code").val()
+
+ 		var formData = new FormData()
+ 		formData.append("secret_key", "185d50608d0044c5cdbad284052bf9b4")
+ 		formData.append("code", code)
+
+ 		$.ajax({
+ 			url : '/delete_promo',
+ 			type : 'POST',
+ 			async : true,
+ 			data : formData,
+ 			processData : false,
+ 			contentType : false,
+ 			success : function(response){
+ 				if(response == 'Authentication failed'){
+ 					alert("Authentication failed ... ")
+ 				}else if(response == 'fail'){
+ 					alert("There is something wrong while deleting this promo code ... ")
+ 				}else if(response == 'success'){
+ 					alert("Promo code has been deleted successfully ... ")
+ 				}
+
+ 				view_promo()
+ 				$("#myModal6").fadeOut("fast")
+ 			}
+ 		})
  	})
 })

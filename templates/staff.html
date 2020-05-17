@@ -122,7 +122,7 @@
         </div>
       </div>
     </div>
-    <!-- The Modal -->
+          <!-- The Modal -->
           <div id="myModal4" class="modal">
             <!-- Modal content -->
             <div class="modal-content4">
@@ -147,6 +147,39 @@
                   <table>
                     <tr>
                       <td><button id = 'add_promo_btn' class='btn btn-primary' disabled="">Add Promo Code</button></td>
+                    </tr>
+                  </table>
+                  </div>
+
+                </div>
+            </div>
+
+            <!-- The Modal -->
+          <div id="myModal6" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content6">
+                <span class="close" id = 'close-modal6'>&times;</span>
+                <span id = "modal-sub-info" style='color:green;font-weight: bolder;'>Add promotion code</span>
+                <div class='booking-form' id='edit-promo-form'>
+                  <div class="form-group">
+                    <span class="form-label">Promo Code</span>
+                    <input class="form-control" type="text" placeholder="Add Promo code" id = 'edit_promo_code' name = 'promo_code'>
+                  </div>
+                  <div class="form-group">
+                    <span class="form-label">Applicable For</span>
+                    <select id="edit_applicable_for" class='form-control'>
+                      <option>Staff</option>
+                      <option>Student</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <span class="form-label">Value</span>
+                    <input class="form-control" type="text" placeholder="Value in percentage (%)" id = 'edit_value' name = 'value'>
+                  </div>
+                  <table>
+                    <tr>
+                      <td><button id = 'edit_promo_btn' class='btn btn-primary' disabled="">Edit Promo Code</button></td>
+                      <td><button id = 'delete_promo_btn' class='btn btn-primary'>Delete Promo Code</button></td>
                     </tr>
                   </table>
                   </div>
