@@ -26,6 +26,14 @@ $(document).ready(function(){
 		$("#myModal6").fadeOut("fast")
 	})
 
+	$("#close-modal7").click(function(){
+		$("#myModal7").fadeOut("fast")
+	})
+
+	$("#not_delete_room").click(function(){
+		$("#myModal7").fadeOut("fast")
+	})
+
 	var search_room = function(search_room_id){
 		// just make a simple ajax request to server
 		var months = {
@@ -402,6 +410,16 @@ $(document).ready(function(){
 	// all I ask for is delete the damn room -_-
 	$("#delete_room_btn").click(function(){
 		var room_id = $("#room_id").html() // get room id
+
+		// pass the room id to the modal dialog
+		$("#deleted_room_id").html(room_id)
+
+		$("#myModal2").fadeOut("fast")
+		$("#myModal7").fadeIn("fast")
+	})
+
+	$("#confirm_delete_room").click(function(){
+		var room_id = $("#deleted_room_id").html()
 		// then just send to server and bam
 		// gone
 		var formData = new FormData()
@@ -425,7 +443,7 @@ $(document).ready(function(){
 				$("#room_id").val('')
 				$("#myModal2 input").val('') // clear out the input entries
 				$("#edit_room_btn").attr("disabled", true)
-				$("#myModal2").fadeOut("fast") // fade out the dialog
+				$("#myModal7").fadeOut("fast") // fade out the dialog
 				view_room() // refresh the room view
 			}
 		})
