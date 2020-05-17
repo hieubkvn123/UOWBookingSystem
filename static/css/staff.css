@@ -102,3 +102,13 @@
   height : 150px;
   overflow: scroll;
 }
+
+#room-mgmt:hover{
+  color : #00FA0050;
+  cursor : pointer;
+}
+
+#promo-mgmt:hover{
+  color : #00FA0050;
+  cursor : pointer;
+}

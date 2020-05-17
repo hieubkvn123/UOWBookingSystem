@@ -758,4 +758,24 @@ $(document).ready(function(){
  			}
  		})
  	})
+
+ 	$("#room-mgmt").click(function(){
+ 		if($("#room-mgmt-dropdown").css("display") == "none"){
+ 		 	$("#arrow-room-mgmt").html("<i class='fa fa-caret-down'></i>")
+ 		}else{
+ 			$("#arrow-room-mgmt").html("<i class='fa fa-caret-right'></i>")
+ 		}
+
+ 		$("#room-mgmt-dropdown").slideToggle(400)
+ 	})
+
+ 	$("#promo-mgmt").click(function(){
+ 		if($("#promo-mgmt-dropdown").css("display") == "none"){
+ 		 	$("#arrow-promo-mgmt").html("<i class='fa fa-caret-down'></i>")
+ 		}else{
+ 			$("#arrow-promo-mgmt").html("<i class='fa fa-caret-right'></i>")
+ 		}
+
+ 		$("#promo-mgmt-dropdown").slideToggle(400)
+ 	})
 })

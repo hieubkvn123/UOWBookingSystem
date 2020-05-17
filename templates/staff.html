@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="/static/css/modal.css">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
@@ -33,27 +34,39 @@
         <div class="p-4 pt-5">
           <a href="#" class="img logo rounded-circle mb-5" style="background-image: url(/static/img/foss.jpg);"></a>
           <ul class="list-unstyled components mb-5">
+
             <li>
-                <a href="#" id="view_room">View/Edit Rooms</a>
-            </li>
-            <!--So if a staff is an admin-->
-            <!--He/She has the basic functions of a staff-->
-            <!--Plus approving released rooms-->
-            {%block staff%}
-              {% if admin %}
+              <p id='room-mgmt'><span id='arrow-room-mgmt'><i class="fa fa-caret-down"></i></span>&nbspRoom Management</p>
+              <ul id = 'room-mgmt-dropdown' style='list-style-type: none;padding-left: 5px'>
                 <li>
-                    <a href="#" id="view_room_status">View Room Status</a>
+                  <a href="#" id="view_room">View/Edit Rooms</a>
                 </li>
-              {%endif%}
-            {%endblock%}
-            <li>
-                <a href="#" id="add_room">Add Rooms</a>
+                <!--So if a staff is an admin-->
+                <!--He/She has the basic functions of a staff-->
+                <!--Plus approving released rooms-->
+                {%block staff%}
+                  {% if admin %}
+                    <li>
+                        <a href="#" id="view_room_status">View Room Status</a>
+                    </li>
+                  {%endif%}
+                {%endblock%}
+                <li>
+                    <a href="#" id="add_room">Add Rooms</a>
+                </li>
+              </ul>
             </li>
-            <li>
-                <a href="#" id="add_promo">Add Promo-code</a>
-            </li>
-            <li>
-                <a href="#" id="view_promo">View Promo-code</a>
+            
+            <li style='margin-top: 10px'>
+              <p id = 'promo-mgmt'><span id='arrow-promo-mgmt'><i class="fa fa-caret-right"></i></span>&nbspPromo-code Management</p>
+              <ul id='promo-mgmt-dropdown' style="list-style-type: none;padding-left: 5px; display: none">
+                <li>
+                    <a href="#" id="add_promo">Add Promo-code</a>
+                </li>
+                <li>
+                    <a href="#" id="view_promo">View Promo-code</a>
+                </li>
+              </ul>
             </li>
             <li>
                 <a href="/logout">Logout</a>
