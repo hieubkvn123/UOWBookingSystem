@@ -37,5 +37,9 @@ This project is a part of module CSIT 214 - IT Project Management at the Univers
 	--> Chi Wei Jin and Salvenia : Front-end design.
 	--> Nong Minh Hieu : QR Code scanner, Face recognition and backend design.
 
+# Start system :
+	--> Start client app : node server.js
+	--> Start backend app : python3 staff_server.py
+
 # PS :
 	--> Dear professor, please visit my Github : https://github.com/hieubkvn123
