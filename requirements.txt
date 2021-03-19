@@ -6,4 +6,4 @@ dlib==19.19.0
 face-recognition==1.3.0
 pyzbar==0.1.8
 mysql-connector==2.2.9
-Pillow==7.0.0
+Pillow==8.1.1
