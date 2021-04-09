@@ -1,6 +1,6 @@
 exports.DB_CONFIG = {
 	host : "localhost",
-	user : "root",
-	password : "XOVT7a1XDK",
+	user : "hieu",
+	password : "Qazwsx007;!@#",
 	database : "UOW_BOOKING_SYS"
 }
